@@ -28,3 +28,5 @@ class Budget(db.Entity):
     start = orm.Required(datetime)
     expiration = orm.Required(datetime)
     amount = orm.Required(int)
+
+db.generate_mapping()
