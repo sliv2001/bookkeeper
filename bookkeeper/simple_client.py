@@ -5,11 +5,12 @@ from pony import orm
 
 from bookkeeper.models.category import Category
 from bookkeeper.models.expense import Expense
-from bookkeeper.repository.sqlite_repository import SqliteRepository
+from bookkeeper.repository.category_repository import CategoryRepository
+from bookkeeper.repository.expense_repository import ExpenseRepository
 from bookkeeper.utils import read_tree
 
-cat_repo = SqliteRepository[Category]()
-exp_repo = SqliteRepository[Expense]()
+cat_repo = CategoryRepository[Category]()
+exp_repo = ExpenseRepository[Expense]()
 
 cats = '''
 продукты
