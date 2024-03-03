@@ -8,6 +8,7 @@ class CategoryRepository(SqliteRepository[T]):
     @orm.db_session
     def add(self, obj: Category) -> int:
         instance = obj
+        orm.commit()
         return instance.pk
 
     @orm.db_session
@@ -15,11 +16,10 @@ class CategoryRepository(SqliteRepository[T]):
         return Category[pk]
     
     @orm.db_session
-    def get_all(self, where: dict[str, Any] | None = None) -> list[Category]:
+    def get_all(self, where = None) -> list[Category]:
         if where is None:
             return orm.select(obj for obj in Category)[:]
-        orm.select(obj for obj in Category
-                   if all(getattr(obj, attr) == value for attr, value in where.items()))[:]
+        return orm.select(obj for obj in Category if where(obj))[:]
         
     @orm.db_session
     def update(self, obj: Category) -> None:

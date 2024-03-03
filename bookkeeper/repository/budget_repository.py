@@ -8,6 +8,7 @@ class BudgetRepository(SqliteRepository[T]):
     @orm.db_session
     def add(self, obj: Budget) -> int:
         instance = obj
+        orm.commit()
         return instance.pk
 
     @orm.db_session
@@ -15,11 +16,10 @@ class BudgetRepository(SqliteRepository[T]):
         return Budget[pk]
     
     @orm.db_session
-    def get_all(self, where: dict[str, Any] | None = None) -> list[Budget]:
+    def get_all(self, where = None) -> list[Budget]:
         if where is None:
             return orm.select(obj for obj in Budget)[:]
-        orm.select(obj for obj in Budget
-                   if all(getattr(obj, attr) == value for attr, value in where.items()))[:]
+        return orm.select(obj for obj in Budget if where(obj))[:]
         
     @orm.db_session
     def update(self, obj: Budget) -> None:

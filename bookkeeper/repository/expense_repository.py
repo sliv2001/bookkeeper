@@ -1,5 +1,5 @@
 from bookkeeper.repository.sqlite_repository import *
-from bookkeeper.models.expense import Expense
+from bookkeeper.models.category import Expense
 
 class ExpenseRepository(SqliteRepository[T]):
     def __init__(self, filename=':memory:') -> None:
@@ -8,6 +8,7 @@ class ExpenseRepository(SqliteRepository[T]):
     @orm.db_session
     def add(self, obj: Expense) -> int:
         instance = obj
+        orm.commit()
         return instance.pk
 
     @orm.db_session
@@ -15,11 +16,10 @@ class ExpenseRepository(SqliteRepository[T]):
         return Expense[pk]
     
     @orm.db_session
-    def get_all(self, where: dict[str, Any] | None = None) -> list[Expense]:
+    def get_all(self, where = None) -> list[Expense]:
         if where is None:
             return orm.select(obj for obj in Expense)[:]
-        orm.select(obj for obj in Expense
-                   if all(getattr(obj, attr) == value for attr, value in where.items()))[:]
+        return orm.select(obj for obj in Expense if where(obj))[:]
         
     @orm.db_session
     def update(self, obj: Expense) -> None:
