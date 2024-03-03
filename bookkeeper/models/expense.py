@@ -1,25 +1,12 @@
-"""
-Описан класс, представляющий расходную операцию
-"""
-
-from dataclasses import dataclass, field
+from pony import orm
 from datetime import datetime
 
+from bookkeeper.models.database import db
+from bookkeeper.models.category import Category
 
-@dataclass(slots=True)
-class Expense:
-    """
-    Расходная операция.
-    amount - сумма
-    category - id категории расходов
-    expense_date - дата расхода
-    added_date - дата добавления в бд
-    comment - комментарий
-    pk - id записи в базе данных
-    """
-    amount: int
-    category: int
-    expense_date: datetime = field(default_factory=datetime.now)
-    added_date: datetime = field(default_factory=datetime.now)
-    comment: str = ''
-    pk: int = 0
+class Expense(db.Entity):
+    pk = orm.PrimaryKey(int, auto=True)
+    # category = orm.Required(Category)
+    expence_date = orm.Required(datetime)
+    added_date = orm.Required(datetime)
+    comment = orm.Optional(str)

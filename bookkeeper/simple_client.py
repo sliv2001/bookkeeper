@@ -1,14 +1,15 @@
 """
 Простой тестовый скрипт для терминала
 """
+from pony import orm
 
 from bookkeeper.models.category import Category
 from bookkeeper.models.expense import Expense
-from bookkeeper.repository.memory_repository import MemoryRepository
+from bookkeeper.repository.sqlite_repository import SqliteRepository
 from bookkeeper.utils import read_tree
 
-cat_repo = MemoryRepository[Category]()
-exp_repo = MemoryRepository[Expense]()
+cat_repo = SqliteRepository[Category]()
+exp_repo = SqliteRepository[Expense]()
 
 cats = '''
 продукты
@@ -20,7 +21,12 @@ cats = '''
 одежда
 '''.splitlines()
 
-Category.create_from_tree(read_tree(cats), cat_repo)
+with orm.db_session:
+    created: dict[str, Category] = {}
+    for child, parent in read_tree(cats):
+        cat = Category(name=child, parent=(created[parent].pk if parent is not None else None), )
+        cat_repo.add(cat)
+        created[child] = cat
 
 while True:
     try:
