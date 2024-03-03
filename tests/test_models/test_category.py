@@ -28,7 +28,7 @@ def repo():
 
 
 def test_create_object():
-            
+
     with orm.db_session:
         c = Category(name='name')
 
@@ -76,7 +76,7 @@ def test_eq():
     with orm.db_session:
         c1 = Category(name='name', parent=1)
         c2 = Category(name='name', parent=1)
-    
+
     with orm.db_session:
         c3 = Category[4]
         c4 = Category[4]
@@ -98,7 +98,7 @@ def test_get_parent_func(repo):
 def test_get_parent(repo):
     with orm.db_session:
         c1 = Category(name='parent')
-        
+
     with orm.db_session:
         c2 = Category(name='name', parent=c1.pk)
 
@@ -123,11 +123,11 @@ def test_get_subcategories(repo: CategoryRepository[Category]):
             c = Category(name=str(i), parent=parent_pk)
             parent_pk = repo.add(c)
             orm.commit()
-        
+
         c = repo.get_all(lambda x: x.name == '0')[0]
         gen = c.get_subcategories(repo)
-    
-    with orm.db_session:    
+
+    with orm.db_session:
         assert isgenerator(gen)
         # using set because order doesn't matter
         assert {c.name for c in gen} == {'1', '2', '3', '4'}

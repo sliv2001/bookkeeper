@@ -14,13 +14,13 @@ class CategoryRepository(SqliteRepository[T]):
     @orm.db_session
     def get(self, pk: int)-> Category:
         return Category[pk]
-    
+
     @orm.db_session
     def get_all(self, where = None) -> list[Category]:
         if where is None:
             return orm.select(obj for obj in Category)[:]
         return orm.select(obj for obj in Category if where(obj))[:]
-        
+
     @orm.db_session
     def update(self, obj: Category) -> None:
         orm.commit()
