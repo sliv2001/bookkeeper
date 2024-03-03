@@ -1,5 +1,5 @@
 from bookkeeper.repository.sqlite_repository import *
-from bookkeeper.models.category import Budget
+from bookkeeper.models.budget import Budget
 
 class BudgetRepository(SqliteRepository[T]):
     def __init__(self, filename=':memory:') -> None:
