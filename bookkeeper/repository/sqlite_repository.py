@@ -12,4 +12,4 @@ class SqliteRepository(AbstractRepository[T]):
         except orm.BindingError as e:
             if e.args[0] == 'Database object was already bound to SQLite provider':
                 pass
-            else: raise e
+            else: raise
