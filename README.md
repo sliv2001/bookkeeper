@@ -108,3 +108,5 @@ poetry run flake8 bookkeeper
 
 Для сдачи работы достаточно прислать ссылку на свой проект на GitHub в форму «Добавить ответ на задание» в ЛМС, 
 pull-request создавать не надо.
+
+<!-- TODO Add about files generation -->
