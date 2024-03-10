@@ -58,35 +58,57 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>36</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menu">
-    <property name="title">
-     <string>Отобразить бюджет</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menu_2">
-    <property name="title">
-     <string>Добавить расходную операцию</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menu_3">
-    <property name="title">
-     <string>Редактировать категории</string>
-    </property>
-   </widget>
-   <addaction name="menu"/>
-   <addaction name="menu_2"/>
-   <addaction name="menu_3"/>
-  </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionShowBudget"/>
+   <addaction name="actionAddOperation"/>
+   <addaction name="actionAlterCats"/>
+  </widget>
+  <action name="actionShowBudget">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Показать бюджет</string>
+   </property>
+   <property name="toolTip">
+    <string>Показать бюджет</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionAddOperation">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Добавить операцию</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionAlterCats">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Редактировать категории</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

@@ -1,10 +1,14 @@
 import sys
 from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import QFile, QIODevice, Qt, Slot, QMetaObject
+from PySide6.QtWidgets import QMainWindow, QWidget
+from PySide6.QtGui import QAction
+
+# TODO Remove generated ones
 from bookkeeper.view.MainWindow import MainWindow
 
 def main():
     app = QApplication(sys.argv)
-    # Following variable must be assigned for interface to be shown
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
