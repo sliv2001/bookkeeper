@@ -24,7 +24,6 @@ class MainWindow(QMainWindow):
         # Rename to BudgetView, BudgetModel
         self.budgetView = Budget()
         self.budgetView.show()
-        self.
         
     @Slot()
     def on_actionAlterCats_triggered(self):
