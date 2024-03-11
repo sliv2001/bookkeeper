@@ -2,10 +2,18 @@ from PySide6.QtCore import Qt, Slot
 from PySide6.QtWidgets import QDialog, QWidget, QMessageBox
 
 from bookkeeper.view.Ui_AddUpdateDialog import Ui_AddUpdateDialog
+from bookkeeper.presenter.presenter import Presenter
 
 class AddUpdateDialog(QDialog):
-    def __init__(self, parent: QWidget | None = ..., flags: Qt.WindowType = ...) -> None:
+
+    presenter: Presenter
+
+    def __init__(self, presenter: Presenter = None, parent: QWidget | None = ..., flags: Qt.WindowType = ...) -> None:
         super(AddUpdateDialog, self).__init__()
+        if presenter == None:
+            self.presenter = self.parent().presenter
+        else:
+            self.presenter = presenter
         self.ui = Ui_AddUpdateDialog()
         self.ui.setupUi(self)
 

@@ -24,15 +24,15 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def on_actionAddOperation_triggered(self):
-        self.addUpdateView = AddUpdateDialog()
+        self.addUpdateView = AddUpdateDialog(parent=self)
         self.addUpdateView.show()
 
     @Slot()
     def on_actionShowBudget_triggered(self):
-        self.budgetView = BudgetView()
+        self.budgetView = BudgetView(parent=self)
         self.budgetView.show()
 
     @Slot()
     def on_actionAlterCats_triggered(self):
-        self.categoryView = CategoryDialog()
+        self.categoryView = CategoryDialog(parent=self)
         self.categoryView.show()
