@@ -6,6 +6,7 @@ from bookkeeper.view.Ui_MainWindow import Ui_MainWindow
 from bookkeeper.view.Budget import BudgetView
 from bookkeeper.view.AddUpdateDialog import AddUpdateDialog
 from bookkeeper.view.Category import CategoryDialog
+from bookkeeper.presenter.presenter import Presenter
 
 class MainWindow(QMainWindow):
 
@@ -13,11 +14,13 @@ class MainWindow(QMainWindow):
     budgetView: BudgetView
     addUpdateView: AddUpdateDialog
     categoryView: CategoryDialog
+    presenter: Presenter
 
     def __init__(self, parent: QWidget | None = ..., flags: Qt.WindowType = ...) -> None:
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.presenter = Presenter()
 
     @Slot()
     def on_actionAddOperation_triggered(self):
