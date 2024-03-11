@@ -9,3 +9,16 @@ class BudgetView(QDialog):
         super(BudgetView, self).__init__()
         self.ui = Ui_BudgetWindow()
         self.ui.setupUi(self)
+
+    @Slot()
+    def on_pushButton_clicked(self):
+        QMessageBox.warning(self, 'Implementation Error', 'This feature is not implemented yet!')
+
+    @Slot()
+    def accept(self) -> None:
+        QMessageBox.warning(self, 'Implementation Error', 'This feature is not implemented yet!')
+        return super().accept()
+
+    @Slot()
+    def reject(self) -> None:
+        return super().reject()
