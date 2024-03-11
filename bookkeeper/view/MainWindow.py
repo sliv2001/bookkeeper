@@ -1,14 +1,18 @@
 from PySide6.QtCore import Qt, Slot
-from PySide6.QtWidgets import QMainWindow, QWidget, QMessageBox
+from PySide6.QtWidgets import QMainWindow, QWidget, QMessageBox, QDialog
 from PySide6.QtGui import QAction
 
 from bookkeeper.view.Ui_MainWindow import Ui_MainWindow
-from bookkeeper.view.Budget import Budget
+from bookkeeper.view.Budget import BudgetView
+from bookkeeper.view.AddUpdateDialog import AddUpdateDialog
+from bookkeeper.view.Category import CategoryDialog
 
 class MainWindow(QMainWindow):
 
     ui: QMainWindow
-    budgetView: QMainWindow
+    budgetView: BudgetView
+    addUpdateView: AddUpdateDialog
+    categoryView: CategoryDialog
 
     def __init__(self, parent: QWidget | None = ..., flags: Qt.WindowType = ...) -> None:
         super(MainWindow, self).__init__()
@@ -17,14 +21,15 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def on_actionAddOperation_triggered(self):
-        QMessageBox.warning(self, 'Implementation Error', 'This feature is not implemented yet!')
-        
+        self.addUpdateView = AddUpdateDialog()
+        self.addUpdateView.show()
+
     @Slot()
     def on_actionShowBudget_triggered(self):
-        # Rename to BudgetView, BudgetModel
-        self.budgetView = Budget()
+        self.budgetView = BudgetView()
         self.budgetView.show()
-        
+
     @Slot()
     def on_actionAlterCats_triggered(self):
-        QMessageBox.warning(self, 'Implementation Error', 'This feature is not implemented yet!')
+        self.categoryView = CategoryDialog()
+        self.categoryView.show()
