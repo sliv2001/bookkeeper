@@ -13,12 +13,15 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTreeWidget" name="treeWidget">
      <column>
       <property name="text">
-       <string notr="true">1</string>
+       <string notr="true"/>
       </property>
      </column>
     </widget>
