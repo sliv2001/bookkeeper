@@ -33,8 +33,8 @@ class CategoryDialog(QDialog):
             self.presenter = presenter
         self.ui = Ui_CategoryDialog()
         self.ui.setupUi(self)
-        self.presenter.updated.connect(self.updateTreeWidget)
-        self.updateTreeWidget()
+        self.presenter.updatedCategory.connect(self.updateAll)
+        self.updateAll()
         
 
     @Slot()
@@ -62,7 +62,9 @@ class CategoryDialog(QDialog):
         return super().reject()
 
     @Slot()
-    def updateTreeWidget(self) -> None:
+    def updateAll(self) -> None:
         self.ui.treeWidget.clear()
         self.topLevels, self.dictOfAll = self.presenter.getCategoriesHierarchy()
         self.displayCategories()
+
+        # TODO complete deletion, renaming, updating categories

@@ -13,7 +13,7 @@ class Presenter(QObject):
     _categoryRepo: CategoryRepository
     _expenseRepo: ExpenseRepository
 
-    updated : Signal = Signal(bool)
+    updatedCategory : Signal = Signal(bool)
 
     _pendingCategoryChanges = []
 
@@ -85,7 +85,7 @@ class Presenter(QObject):
         if self._categoryRepo.getByName(cat) != None:
             raise RuntimeError('Entry already exists!')
         self._pendingCategoryChanges.append([None, cat, parent])
-        self.updated.emit(True)
+        self.updatedCategory.emit(True)
 
     def commitCategories(self):
         with orm.db_session:

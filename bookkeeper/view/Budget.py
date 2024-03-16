@@ -12,7 +12,7 @@ class BudgetView(QDialog):
     def __init__(self, presenter: Presenter = None, parent: QWidget | None = ..., flags: Qt.WindowType = ...) -> None:
         super(BudgetView, self).__init__()
         if presenter == None:
-            self.presenter = self.parent().presenter
+            self.presenter = parent.presenter
         else:
             self.presenter = presenter
         self.ui = Ui_BudgetWindow()
