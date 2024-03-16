@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>498</width>
-    <height>102</height>
+    <width>553</width>
+    <height>207</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
@@ -19,30 +25,68 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout_4">
-     <item row="1" column="0">
+     <item row="2" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>Категория</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="lineEdit"/>
+     <item row="2" column="2">
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>Добавить</string>
+       </property>
+      </widget>
      </item>
-     <item row="1" column="1">
+     <item row="4" column="1">
+      <widget class="QPlainTextEdit" name="plainTextEdit">
+       <property name="plainText">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
       <widget class="QComboBox" name="comboBox"/>
      </item>
-     <item row="0" column="0">
+     <item row="1" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
         <string>Сумма</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
-      <widget class="QPushButton" name="pushButton">
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Добавить</string>
+        <string>Комментарий</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Дата совершения</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QDateTimeEdit" name="dateTimeEdit">
+       <property name="focusPolicy">
+        <enum>Qt::StrongFocus</enum>
+       </property>
+       <property name="calendarPopup">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSpinBox" name="spinBox">
+       <property name="maximum">
+        <number>1000000000</number>
+       </property>
+       <property name="singleStep">
+        <number>100</number>
        </property>
       </widget>
      </item>
@@ -60,6 +104,12 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>dateTimeEdit</tabstop>
+  <tabstop>comboBox</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>plainTextEdit</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -69,12 +119,12 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>199</y>
+     <x>257</x>
+     <y>92</y>
     </hint>
     <hint type="destinationlabel">
      <x>248</x>
-     <y>109</y>
+     <y>101</y>
     </hint>
    </hints>
   </connection>
@@ -85,12 +135,12 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>199</y>
+     <x>257</x>
+     <y>92</y>
     </hint>
     <hint type="destinationlabel">
      <x>248</x>
-     <y>109</y>
+     <y>101</y>
     </hint>
    </hints>
   </connection>

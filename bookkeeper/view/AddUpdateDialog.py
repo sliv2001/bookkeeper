@@ -1,4 +1,6 @@
-from PySide6.QtCore import Qt, Slot
+import datetime
+
+from PySide6.QtCore import Qt, Slot, QDateTime
 from PySide6.QtWidgets import QDialog, QWidget, QMessageBox, QDialogButtonBox
 
 from bookkeeper.view.Ui_AddUpdateDialog import Ui_AddUpdateDialog
@@ -20,15 +22,17 @@ class AddUpdateDialog(QDialog):
         self.ui = Ui_AddUpdateDialog()
         self.ui.setupUi(self)
         self.updateAll()
+        self.ui.dateTimeEdit.setDateTime(QDateTime.currentDateTime())
         self.presenter.updatedCategory.connect(self.updateAll)
+        self.presenter.updatedExpense.connect(self.updateAll)
 
     @Slot()
     def on_pushButton_clicked(self):
         QMessageBox.warning(self, 'Implementation Error', 'This feature is not implemented yet!')
 
     @Slot()
-    def on_lineEdit_textEdited(self):
-        self.ui.buttonBox.button(QDialogButtonBox.StandardButton.Ok).setEnabled(len(self.ui.lineEdit.text()) > 0)
+    def on_spinBox_textChanged(self):
+        self.ui.buttonBox.button(QDialogButtonBox.StandardButton.Ok).setEnabled(self.ui.spinBox.value() > 0)
 
     @Slot()
     def on_pushButton_clicked(self):
@@ -37,7 +41,12 @@ class AddUpdateDialog(QDialog):
 
     @Slot()
     def accept(self) -> None:
-        QMessageBox.warning(self, 'Implementation Error', 'This feature is not implemented yet!')
+        # TODO add removeExpense to presenter
+        category = self.ui.comboBox.itemText(self.ui.comboBox.currentIndex())
+        value = int(self.ui.spinBox.text())
+        dt = self.ui.dateTimeEdit.dateTime().toPython()
+        comment = self.ui.plainTextEdit.toPlainText()
+        self.presenter.addExpense(category, value, dt, comment)
         return super().accept()
 
     @Slot()
@@ -50,4 +59,4 @@ class AddUpdateDialog(QDialog):
         self.ui.comboBox.setEnabled(len(self.cats)>0)
         self.ui.comboBox.clear()
         self.ui.comboBox.insertItems(0, self.cats)
-        self.ui.buttonBox.button(QDialogButtonBox.StandardButton.Ok).setEnabled(len(self.ui.lineEdit.text()) > 0)
+        self.ui.buttonBox.button(QDialogButtonBox.StandardButton.Ok).setEnabled(self.ui.spinBox.value() > 0)

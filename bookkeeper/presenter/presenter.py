@@ -1,3 +1,5 @@
+import datetime
+
 from pony import orm
 from PySide6.QtCore import QObject, Signal
 
@@ -13,7 +15,8 @@ class Presenter(QObject):
     _categoryRepo: CategoryRepository
     _expenseRepo: ExpenseRepository
 
-    updatedCategory : Signal = Signal(bool)
+    updatedCategory: Signal = Signal(bool)
+    updatedExpense: Signal = Signal(bool)
 
     _pendingCategoryChanges = []
 
@@ -115,3 +118,18 @@ class Presenter(QObject):
     
     def cancelCategories(self):
         self._pendingCategoryChanges = []
+
+    def addExpense(self, category: str, value: int, dt: datetime.datetime, comment: str = None):
+        with orm.db_session():
+            catEntry = self._categoryRepo.getByName(category)
+            if comment == None:
+                exp = Expense(amount=value, category=catEntry, expense_date=dt)
+            else:
+                exp = Expense(amount=value, category=catEntry, expense_date=dt, comment=comment)
+            self._expenseRepo.add(exp)
+        self.updatedExpense.emit(True)
+
+    def getRecentExpenses(self, days: int):
+        with orm.db_session():
+            res = self._expenseRepo.get_all(lambda x: x.expense_date > datetime.datetime.now()-datetime.timedelta(days=days))
+            return [[item.expense_date, item.amount, item.category.name, item.comment] for item in res]
