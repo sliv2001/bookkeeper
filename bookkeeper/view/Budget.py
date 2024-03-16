@@ -56,17 +56,17 @@ class BudgetView(QDialog):
         weeklyPlan = QTableWidgetItem(str(self.presenter.getBudget(2)))
         self.ui.tableWidget.setItem(1, 2, weeklyPlan)
 
-        mounthlyStart = QTableWidgetItem((datetime.now()+timedelta(months=-1)).strftime('%a %d %b %Y'))
-        self.ui.tableWidget.setItem(2, 0, mounthlyStart)
-        mounthlyStart.setFlags(~Qt.ItemFlag.ItemIsEditable)
-        mounthlyEnd = QTableWidgetItem((datetime.now()+timedelta(=1)).strftime('%a %d %b %Y'))
-        self.ui.tableWidget.setItem(2, 1, mounthlyEnd)
-        mounthlyEnd.setFlags(~Qt.ItemFlag.ItemIsEditable)
-        mounthlyPlan = QTableWidgetItem(str(self.presenter.getBudget(3)))
-        self.ui.tableWidget.setItem(2, 2, mounthlyPlan)
+        # mounthlyStart = QTableWidgetItem((datetime.now()+timedelta(months=-1)).strftime('%a %d %b %Y'))
+        # self.ui.tableWidget.setItem(2, 0, mounthlyStart)
+        # mounthlyStart.setFlags(~Qt.ItemFlag.ItemIsEditable)
+        # mounthlyEnd = QTableWidgetItem((datetime.now()+timedelta(months=1)).strftime('%a %d %b %Y'))
+        # self.ui.tableWidget.setItem(2, 1, mounthlyEnd)
+        # mounthlyEnd.setFlags(~Qt.ItemFlag.ItemIsEditable)
+        # mounthlyPlan = QTableWidgetItem(str(self.presenter.getBudget(3)))
+        # self.ui.tableWidget.setItem(2, 2, mounthlyPlan)
 
-        for i, item in enumerate(entries):
-            # The code cannot be unified as format is different
-            dtStart = QTableWidgetItem(item[0].strftime('%a %d %b %Y, %H:%M'))
-            comment.setFlags(~Qt.ItemFlag.ItemIsEditable)
-            self.ui.tableWidget.setItem(i, 3, comment)
+        # for i, item in enumerate(entries):
+        #     # The code cannot be unified as format is different
+        #     dtStart = QTableWidgetItem(item[0].strftime('%a %d %b %Y, %H:%M'))
+        #     comment.setFlags(~Qt.ItemFlag.ItemIsEditable)
+        #     self.ui.tableWidget.setItem(i, 3, comment)

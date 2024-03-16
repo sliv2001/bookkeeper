@@ -8,7 +8,7 @@ class BudgetRepository(SqliteRepository[T]):
         super().__init__(filename)
         with orm.db_session():
             try:
-                b = Budget[0]
+                b = Budget[1]
             except orm.ObjectNotFound:
                 # Initialize daily, weekly, monthly
                 b0 = Budget(start = datetime.now(), expiration = datetime.now(), amount=100)

@@ -140,7 +140,7 @@ class Presenter(QObject):
 
     def getBudgets(self):
         with orm.db_session():
-            res = self._budgetRepo.get_all(lambda x: x.pk > 2)
+            res = self._budgetRepo.get_all(lambda x: x.pk > 3)
             return [[item.start, item.expiration, item.amount] for item in res]
         
     # 1=daily, 2=weekly, 3=monthly
