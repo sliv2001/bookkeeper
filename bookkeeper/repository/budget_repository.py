@@ -1,9 +1,19 @@
+from datetime import datetime
+
 from bookkeeper.repository.sqlite_repository import *
 from bookkeeper.models.budget import Budget
 
 class BudgetRepository(SqliteRepository[T]):
     def __init__(self, filename=':memory:') -> None:
         super().__init__(filename)
+        with orm.db_session():
+            try:
+                b = Budget[0]
+            except orm.ObjectNotFound:
+                # Initialize daily, weekly, monthly
+                b0 = Budget(start = datetime.now(), expiration = datetime.now(), amount=100)
+                b1 = Budget(start = datetime.now(), expiration = datetime.now(), amount=1000)
+                b2 = Budget(start = datetime.now(), expiration = datetime.now(), amount=10000)
 
     @orm.db_session
     def add(self, obj: Budget) -> int:

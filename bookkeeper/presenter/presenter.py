@@ -129,7 +129,22 @@ class Presenter(QObject):
             self._expenseRepo.add(exp)
         self.updatedExpense.emit(True)
 
-    def getRecentExpenses(self, days: int):
+    def getExpensesInInterval(self, begin: datetime.datetime, end: datetime.datetime):
         with orm.db_session():
-            res = self._expenseRepo.get_all(lambda x: x.expense_date > datetime.datetime.now()-datetime.timedelta(days=days))
+            res = self._expenseRepo.get_all(lambda x: x.expense_date < end and x.expense_date >= begin)
             return [[item.expense_date, item.amount, item.category.name, item.comment] for item in res]
+
+# TODO remove datetime.datetime
+    def getRecentExpenses(self, days: int):
+        return self.getExpensesInInterval(datetime.datetime.now()-datetime.timedelta(days=days), datetime.datetime.now())
+
+    def getBudgets(self):
+        with orm.db_session():
+            res = self._budgetRepo.get_all(lambda x: x.pk > 2)
+            return [[item.start, item.expiration, item.amount] for item in res]
+        
+    # 1=daily, 2=weekly, 3=monthly
+    def getBudget(self, period: int):
+        with orm.db_session():
+            res = self._budgetRepo.get(period)
+            return res.amount
