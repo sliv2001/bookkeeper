@@ -14,6 +14,10 @@ class CategoryRepository(SqliteRepository[T]):
     @orm.db_session
     def get(self, pk: int)-> Category:
         return Category[pk]
+    
+    @orm.db_session
+    def getByName(self, name: str) -> Category:
+        return Category.get(name=name)
 
     @orm.db_session
     def get_all(self, where = None) -> list[Category]:
