@@ -133,9 +133,11 @@ class Presenter(QObject):
             self._expenseRepo.add(exp)
         self.updatedExpense.emit(True)
 
-    def getExpensesInInterval(self, begin: datetime.datetime, end: datetime.datetime):
+    def getExpensesInInterval(self, begin: datetime.date, end: datetime.date):
+        beginDT = self.getDateTime_fromDate(begin)
+        endDT = self.getDateTime_fromDate(end, ceil=False)
         with orm.db_session():
-            res = self._expenseRepo.get_all(lambda x: x.expense_date < end and x.expense_date >= begin)
+            res = self._expenseRepo.get_all(lambda x: x.expense_date <= endDT and x.expense_date >= beginDT)
             return [[item.expense_date, item.amount, item.category.name, item.comment] for item in res]
 
 # TODO remove datetime.datetime
@@ -162,8 +164,11 @@ class Presenter(QObject):
         self.updatedBudget.emit(True)
 
 #TODO move to utils
-    def getDateTime_fromDate(self, date):
-        return datetime.datetime.combine(date, datetime.datetime.min.time())
+    def getDateTime_fromDate(self, date, ceil = True):
+        if ceil:
+            return datetime.datetime.combine(date, datetime.datetime.min.time())
+        else:
+            return datetime.datetime.combine(date, datetime.datetime.max.time())
 
     #TODO refactor following:
     def commitBudget(self):

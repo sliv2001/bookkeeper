@@ -57,7 +57,7 @@ class BudgetView(QDialog):
         entrySlack = QTableWidgetItem(str(plan-expenses))
         entrySlack.setFlags(~Qt.ItemFlag.ItemIsEditable)
         if (plan-expenses < 0):
-            entrySlack.setBackground(QColor(r=128, g=0, b=0))
+            entrySlack.setBackground(QColor('red'))
         self.ui.tableWidget.setItem(index, 3, entrySlack)
         
 
@@ -77,7 +77,7 @@ class BudgetView(QDialog):
         self.ui.tableWidget.setRowCount(len(entries)+3)
         
         #TODO make that compact
-        self.appendBudgetEntry(0, datetime.now(), datetime.now(), self.presenter.getBudget(1))
+        self.appendBudgetEntry(0, datetime.today(), datetime.today(), self.presenter.getBudget(1))
 
         # TODO move these to utils
         weekBegin, weekEnd = self.getWeekBorders(datetime.now())
