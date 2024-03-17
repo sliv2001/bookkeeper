@@ -30,9 +30,16 @@ class AddUpdateDialog(QDialog):
     def on_pushButton_clicked(self):
         QMessageBox.warning(self, 'Implementation Error', 'This feature is not implemented yet!')
 
+    def updateOkButton(self):
+        self.ui.buttonBox.button(QDialogButtonBox.StandardButton.Ok).setEnabled(self.ui.spinBox.value() > 0 and self.ui.comboBox.currentIndex() > -1)
+    
     @Slot()
     def on_spinBox_textChanged(self):
-        self.ui.buttonBox.button(QDialogButtonBox.StandardButton.Ok).setEnabled(self.ui.spinBox.value() > 0)
+        self.updateOkButton()
+
+    @Slot()
+    def on_comboBox_currentIndexChanged(self):
+        self.updateOkButton()
 
     @Slot()
     def on_pushButton_clicked(self):
