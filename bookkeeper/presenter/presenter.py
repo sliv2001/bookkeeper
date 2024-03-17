@@ -154,10 +154,15 @@ class Presenter(QObject):
         # The budget indexes which were affected by change
         changedIndexes = [i[3] for i in self._pendingBudgetChanges]
 
-        # replace budgets from database with local changes
+        # replace budgets from database with local changes and append
         for i, budget in enumerate(currentBudgets):
             if budget[3] in changedIndexes:
-                currentBudgets[i] = self._pendingBudgetChanges[changedIndexes.index(budget[3])]
+                indexToRemove = changedIndexes.index(budget[3])
+                currentBudgets[i] = self._pendingBudgetChanges[indexToRemove]
+                del changedIndexes[indexToRemove]
+        for i in changedIndexes:
+            item = next(filter(lambda x: x[3]==i, self._pendingBudgetChanges), None)
+            currentBudgets.append(item)
         return currentBudgets
         
     # 1=daily, 2=weekly, 3=monthly
