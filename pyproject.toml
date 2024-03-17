@@ -12,6 +12,7 @@ python = "^3.10,<3.13"
 pytest-cov = "^4.0.0"
 pony = "^0.7.17"
 pyside6 = "^6.6.2"
+python-dateutil = "^2.9.0.post0"
 
 
 [tool.poetry.group.dev.dependencies]
