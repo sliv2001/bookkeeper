@@ -66,4 +66,4 @@ class AddUpdateDialog(QDialog):
         self.ui.comboBox.setEnabled(len(self.cats)>0)
         self.ui.comboBox.clear()
         self.ui.comboBox.insertItems(0, self.cats)
-        self.ui.buttonBox.button(QDialogButtonBox.StandardButton.Ok).setEnabled(self.ui.spinBox.value() > 0)
+        self.updateOkButton()

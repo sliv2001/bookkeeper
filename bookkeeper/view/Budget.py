@@ -41,6 +41,10 @@ class BudgetView(QDialog):
     def reject(self) -> None:
         self.presenter.cancelBudget()
         return super().reject()
+    
+    @Slot()
+    def on_spinBox_textChanged(self):
+        self.updateAddButton()
 
     def appendBudgetEntry(self, index: int, start: datetime, end: datetime, plan: int):
         entryStart = QTableWidgetItem(start.strftime('%a %d %b %Y'))
@@ -91,3 +95,8 @@ class BudgetView(QDialog):
 
         for i, item in enumerate(entries):
             self.appendBudgetEntry(3+i, item[0], item[1], item[2])
+
+        self.updateAddButton()
+
+    def updateAddButton(self):
+        self.ui.pushButton.setEnabled(self.ui.spinBox.value() > 0)
