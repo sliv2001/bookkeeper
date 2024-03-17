@@ -17,8 +17,12 @@ class Presenter(QObject):
 
     updatedCategory: Signal = Signal(bool)
     updatedExpense: Signal = Signal(bool)
+    updatedBudget: Signal = Signal(bool)
 
     _pendingCategoryChanges = []
+    _pendingBudgetChanges = []
+
+    _budget_IdPkDict = {}
 
     def __init__(self) -> None:
         super().__init__()
@@ -141,10 +145,48 @@ class Presenter(QObject):
     def getBudgets(self):
         with orm.db_session():
             res = self._budgetRepo.get_all(lambda x: x.pk > 3)
-            return [[item.start, item.expiration, item.amount] for item in res]
+            for i in range(len(res)):
+                self._budget_IdPkDict[i] = res[i].pk
+            _currentBudgets = [[item.start, item.expiration, item.amount, None] for item in res] + self._pendingBudgetChanges
+            return _currentBudgets
         
     # 1=daily, 2=weekly, 3=monthly
     def getBudget(self, period: int):
         with orm.db_session():
             res = self._budgetRepo.get(period)
+            self._budget_IdPkDict[period-1] = res.pk
             return res.amount
+        
+    def addBudget(self, start: datetime.datetime, end: datetime.datetime, plan: int, index: int):
+        self._pendingBudgetChanges.append([start, end, plan, index])
+        self.updatedBudget.emit(True)
+
+#TODO move to utils
+    def getDateTime_fromDate(self, date):
+        return datetime.datetime.combine(date, datetime.datetime.min.time())
+
+    #TODO refactor following:
+    def commitBudget(self):
+        with orm.db_session():
+            for budget in self._pendingBudgetChanges:
+                if budget[3] != None and not budget[3] in self._budget_IdPkDict.keys():
+                    # Append
+                    budgetEntry = Budget(start=self.getDateTime_fromDate(budget[0]), expiration=self.getDateTime_fromDate(budget[1]), amount=budget[2])
+                    self._budgetRepo.add(budgetEntry)
+                    self._budget_IdPkDict[budget[3]] = budgetEntry.pk
+                elif budget[3] != None and budget[3] in self._budget_IdPkDict.keys():
+                    # Update
+                    budgetEntry = self._budgetRepo.get(self._budget_IdPkDict[budget[3]])
+                    budgetEntry.start = self.getDateTime_fromDate(budget)
+                    budgetEntry.expiration = datetime.datetime.combine(budget[1], datetime.datetime.min.time())
+                    budgetEntry.amount = budget[2]
+                    self._budgetRepo.update(budgetEntry)
+                elif budget[2]==None:
+                    # Remove
+                    self._budgetRepo.delete(budget[3])
+                else:
+                    raise RuntimeError('Budget entry corrupted')
+        self._pendingBudgetChanges
+
+    def cancelBudget(self):
+        self._pendingBudgetChanges = []
