@@ -145,15 +145,26 @@ class Presenter(QObject):
         return self.getExpensesInInterval(datetime.datetime.now()-datetime.timedelta(days=days), datetime.datetime.now())
 
     def getBudgets(self):
+        # We need to combine data stored in database with current uncommited changes
         with orm.db_session():
             res = self._budgetRepo.get_all(lambda x: x.pk > 3)
             for i in range(len(res)):
-                self._budget_IdPkDict[i] = res[i].pk
-            _currentBudgets = [[item.start, item.expiration, item.amount, None] for item in res] + self._pendingBudgetChanges
-            return _currentBudgets
+                self._budget_IdPkDict[i+3] = res[i].pk
+            currentBudgets = [[item.start, item.expiration, item.amount, k+3] for k, item in enumerate(res)]
+        # The budget indexes which were affected by change
+        changedIndexes = [i[3] for i in self._pendingBudgetChanges]
+
+        # replace budgets from database with local changes
+        for i, budget in enumerate(currentBudgets):
+            if budget[3] in changedIndexes:
+                currentBudgets[i] = self._pendingBudgetChanges[changedIndexes.index(budget[3])]
+        return currentBudgets
         
     # 1=daily, 2=weekly, 3=monthly
     def getBudget(self, period: int):
+        changedIndexes = [i[3] for i in self._pendingBudgetChanges]
+        if period-1 in changedIndexes:
+            return self._pendingBudgetChanges[changedIndexes.index(period-1)][2]
         with orm.db_session():
             res = self._budgetRepo.get(period)
             self._budget_IdPkDict[period-1] = res.pk
@@ -161,6 +172,11 @@ class Presenter(QObject):
         
     def addBudget(self, start: datetime.datetime, end: datetime.datetime, plan: int, index: int):
         self._pendingBudgetChanges.append([start, end, plan, index])
+        self.updatedBudget.emit(True)
+
+    def updateBudget(self, index: int, plan: int):
+        budgetEntry = self._budgetRepo.get(self._budget_IdPkDict[index])
+        self._pendingBudgetChanges.append([budgetEntry.start, budgetEntry.expiration, plan, index])
         self.updatedBudget.emit(True)
 
 #TODO move to utils
@@ -182,7 +198,7 @@ class Presenter(QObject):
                 elif budget[3] != None and budget[3] in self._budget_IdPkDict.keys():
                     # Update
                     budgetEntry = self._budgetRepo.get(self._budget_IdPkDict[budget[3]])
-                    budgetEntry.start = self.getDateTime_fromDate(budget)
+                    budgetEntry.start = self.getDateTime_fromDate(budget[0])
                     budgetEntry.expiration = datetime.datetime.combine(budget[1], datetime.datetime.min.time())
                     budgetEntry.amount = budget[2]
                     self._budgetRepo.update(budgetEntry)
@@ -191,7 +207,7 @@ class Presenter(QObject):
                     self._budgetRepo.delete(budget[3])
                 else:
                     raise RuntimeError('Budget entry corrupted')
-        self._pendingBudgetChanges
+        self._pendingBudgetChanges = []
 
     def cancelBudget(self):
         self._pendingBudgetChanges = []

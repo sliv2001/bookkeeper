@@ -12,6 +12,8 @@ class BudgetView(QDialog):
 
     presenter: Presenter
 
+    _updateAllowed: bool = False
+
     def __init__(self, presenter: Presenter = None, parent: QWidget | None = ..., flags: Qt.WindowType = ...) -> None:
         super(BudgetView, self).__init__()
         if presenter == None:
@@ -22,8 +24,9 @@ class BudgetView(QDialog):
         self.ui.setupUi(self)
         self.ui.dateEdit.setDateTime(QDateTime.currentDateTime())
         self.ui.dateEdit_2.setDateTime(QDateTime.currentDateTime())
-        self.presenter.updatedBudget.connect(self.updateBudget)
         self.updateBudget()
+        self._updateAllowed = True
+        self.presenter.updatedBudget.connect(self.updateBudget)
 
     @Slot()
     def on_pushButton_clicked(self):
@@ -46,7 +49,13 @@ class BudgetView(QDialog):
     def on_spinBox_textChanged(self):
         self.updateAddButton()
 
+    @Slot(QTableWidgetItem)
+    def on_tableWidget_itemChanged(self, item: QTableWidgetItem):
+        if self._updateAllowed and item.column()==2: # Plan
+            self.presenter.updateBudget(item.row(), int(item.text()))
+
     def appendBudgetEntry(self, index: int, start: datetime, end: datetime, plan: int):
+        self._updateAllowed = False
         entryStart = QTableWidgetItem(start.strftime('%a %d %b %Y'))
         entryStart.setFlags(~Qt.ItemFlag.ItemIsEditable)
         self.ui.tableWidget.setItem(index, 0, entryStart)
@@ -63,6 +72,7 @@ class BudgetView(QDialog):
         if (plan-expenses < 0):
             entrySlack.setBackground(QColor('red'))
         self.ui.tableWidget.setItem(index, 3, entrySlack)
+        self._updateAllowed = True
         
 
     def getWeekBorders(self, dt: datetime):
