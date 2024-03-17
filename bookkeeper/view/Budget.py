@@ -30,10 +30,15 @@ class BudgetView(QDialog):
 
     @Slot()
     def on_pushButton_clicked(self):
-        self.presenter.addBudget(self.ui.dateEdit.date().toPython(),
-                                 self.ui.dateEdit_2.date().toPython(),
-                                 self.ui.spinBox.value(),
-                                 self.ui.tableWidget.rowCount())
+        dateStart = self.ui.dateEdit.date().toPython()
+        dateEnd = self.ui.dateEdit_2.date().toPython()
+        if (dateStart > dateEnd):
+            raise RuntimeWarning('Starting time cannot be greater than ending time')
+        else:
+            self.presenter.addBudget(dateStart,
+                                    dateEnd,
+                                    self.ui.spinBox.value(),
+                                    self.ui.tableWidget.rowCount())
 
     @Slot()
     def accept(self) -> None:
