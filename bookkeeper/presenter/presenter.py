@@ -161,8 +161,9 @@ class Presenter(QObject):
                 currentBudgets[i] = self._pendingBudgetChanges[indexToRemove]
                 del changedIndexes[indexToRemove]
         for i in changedIndexes:
-            item = next(filter(lambda x: x[3]==i, self._pendingBudgetChanges), None)
-            currentBudgets.append(item)
+            if not i < 3:
+                item = next(filter(lambda x: x[3]==i, self._pendingBudgetChanges), None)
+                currentBudgets.append(item)
         return currentBudgets
         
     # 1=daily, 2=weekly, 3=monthly
@@ -180,8 +181,13 @@ class Presenter(QObject):
         self.updatedBudget.emit(True)
 
     def updateBudget(self, index: int, plan: int):
-        budgetEntry = self._budgetRepo.get(self._budget_IdPkDict[index])
-        self._pendingBudgetChanges.append([budgetEntry.start, budgetEntry.expiration, plan, index])
+        try:
+            budgetEntry = self._budgetRepo.get(self._budget_IdPkDict[index])
+            self._pendingBudgetChanges.append([budgetEntry.start, budgetEntry.expiration, plan, index])
+        except KeyError:
+            #TODO move to function:
+            item = next(filter(lambda x: x[3]==index, self._pendingBudgetChanges), None)
+            item[2] = plan
         self.updatedBudget.emit(True)
 
 #TODO move to utils
