@@ -13,6 +13,7 @@ pytest-cov = "^4.0.0"
 pony = "^0.7.17"
 pyside6 = "^6.6.2"
 python-dateutil = "^2.9.0.post0"
+pytest-qt = "^4.4.0"
 
 
 [tool.poetry.group.dev.dependencies]
