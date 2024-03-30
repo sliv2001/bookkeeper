@@ -8,7 +8,7 @@ from bookkeeper.models.database import db
 
 class Category(db.Entity):
     pk = orm.PrimaryKey(int, auto=True)
-    name = orm.Required(str, unique=True)
+    name = orm.Required(str)
     parent = orm.Optional(int)
     expense = orm.Set('Expense')
 

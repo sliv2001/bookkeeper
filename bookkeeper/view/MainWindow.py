@@ -22,7 +22,7 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.presenter = Presenter()
+        self.presenter = Presenter(name='data.db3')
         self.presenter.updatedExpense.connect(self.updateMainView)
         self.updateMainView()
 

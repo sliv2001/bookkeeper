@@ -24,11 +24,11 @@ class Presenter(QObject):
 
     _budget_IdPkDict = {}
 
-    def __init__(self) -> None:
+    def __init__(self, name = None) -> None:
         super().__init__()
-        self._budgetRepo = BudgetRepository('data.db3')
-        self._categoryRepo = CategoryRepository('data.db3')
-        self._expenseRepo = ExpenseRepository('data.db3')
+        self._budgetRepo = BudgetRepository(name)
+        self._categoryRepo = CategoryRepository(name)
+        self._expenseRepo = ExpenseRepository(name)
 
     def _getCategoryChildren(self, item):
         # Recursively traverse database and append res, which is dictionary {parent: [children]}
