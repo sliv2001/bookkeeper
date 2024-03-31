@@ -27,23 +27,23 @@ class MainWindow(QMainWindow):
         self.updateMainView()
 
     @Slot()
-    def on_actionAddOperation_triggered(self):
+    def on_actionAddOperation_triggered(self) -> None:
         self.addUpdateView = AddUpdateDialog(parent=self)
         self.addUpdateView.show()
 
     @Slot()
-    def on_actionShowBudget_triggered(self):
+    def on_actionShowBudget_triggered(self) -> None:
         self.budgetView = BudgetView(parent=self)
         self.budgetView.show()
 
     @Slot()
-    def on_actionAlterCats_triggered(self):
+    def on_actionAlterCats_triggered(self) -> None:
         self.categoryView = CategoryDialog(parent=self)
         self.categoryView.show()
 
 #TODO replace list with class
     @Slot()
-    def updateMainView(self):
+    def updateMainView(self) -> None:
         days = 365
         res = 0
         entries = self.presenter.getRecentExpenses(days)

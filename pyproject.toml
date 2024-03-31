@@ -14,6 +14,8 @@ pony = "^0.7.17"
 pyside6 = "^6.6.2"
 python-dateutil = "^2.9.0.post0"
 pytest-qt = "^4.4.0"
+pony-stubs = "^0.5.2"
+types-python-dateutil = "^2.9.0.20240316"
 
 
 [tool.poetry.group.dev.dependencies]

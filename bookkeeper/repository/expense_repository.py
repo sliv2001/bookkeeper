@@ -1,30 +1,33 @@
+from pony import orm
+from typing import Callable
+
 from bookkeeper.repository.sqlite_repository import *
 from bookkeeper.models.expense import Expense
 
-class ExpenseRepository(SqliteRepository[T]):
+class ExpenseRepository(SqliteRepository[Expense]):
     def __init__(self, filename=':memory:') -> None:
         super().__init__(filename)
 
-    @orm.db_session
     def add(self, obj: Expense) -> int:
-        instance = obj
-        orm.commit()
-        return instance.pk
+        with orm.db_session:
+            instance = obj
+            orm.commit()
+            return instance.pk
 
-    @orm.db_session
-    def get(self, pk: int)-> Expense:
-        return Expense[pk]
+    def get(self, pk: int)-> Any:
+        with orm.db_session:
+            return Expense.get(pk=pk)
     
-    @orm.db_session
-    def get_all(self, where = None) -> list[Expense]:
-        if where is None:
-            return orm.select(obj for obj in Expense)[:]
-        return orm.select(obj for obj in Expense if where(obj))[:]
+    def get_all(self, where: Callable[[Any], bool] = True) -> Any:
+        with orm.db_session:
+            if where is True:
+                return orm.select(obj for obj in Expense)[:]
+            return orm.select(obj for obj in Expense if where(obj))[:]
         
-    @orm.db_session
     def update(self, obj: Expense) -> None:
-        orm.commit()
+        with orm.db_session:
+            orm.commit()
 
-    @orm.db_session
     def delete(self, pk: int) -> None:
-        Expense[pk].delete()
+        with orm.db_session:
+            Expense[pk].delete()

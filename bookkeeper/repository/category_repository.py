@@ -1,34 +1,40 @@
+from pony import orm
+from typing import Callable, Any
+
 from bookkeeper.repository.sqlite_repository import *
 from bookkeeper.models.category import Category
 
-class CategoryRepository(SqliteRepository[T]):
-    def __init__(self, filename=':memory:') -> None:
+class CategoryRepository(SqliteRepository[Category]):
+    def __init__(self, filename: str = ':memory:') -> None:
         super().__init__(filename)
 
-    @orm.db_session
     def add(self, obj: Category) -> int:
-        instance = obj
-        orm.commit()
-        return instance.pk
+        with orm.db_session:
+            instance = obj
+            orm.commit()
+            return instance.pk
 
-    @orm.db_session
-    def get(self, pk: int)-> Category:
-        return Category[pk]
     
-    @orm.db_session
-    def getByName(self, name: str) -> Category:
-        return Category.get(name=name)
+    def get(self, pk: int)-> Any:
+        with orm.db_session:
+            return Category.get(pk=pk)
+    
+    
+    def getByName(self, name: str) -> Any:
+        with orm.db_session:
+            return Category.get(name=name)
 
-    @orm.db_session
-    def get_all(self, where = None) -> list[Category]:
-        if where is None:
-            return orm.select(obj for obj in Category)[:]
-        return orm.select(obj for obj in Category if where(obj))[:]
+    
+    def get_all(self, where: Callable[[Any], bool] = lambda x: True) -> list[Category]:
+        with orm.db_session:
+            return orm.select(obj for obj in Category if where(obj))[:]
 
-    @orm.db_session
+    
     def update(self, obj: Category) -> None:
-        orm.commit()
+        with orm.db_session:
+            orm.commit()
 
-    @orm.db_session
+    
     def delete(self, pk: int) -> None:
-        Category[pk].delete()
+        with orm.db_session:
+            Category[pk].delete()

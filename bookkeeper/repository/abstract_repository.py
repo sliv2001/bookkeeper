@@ -8,7 +8,7 @@
 """
 
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar, Protocol, Any
+from typing import Generic, TypeVar, Protocol, Any, Callable
 
 
 class Model(Protocol):  # pylint: disable=too-few-public-methods
@@ -44,7 +44,7 @@ class AbstractRepository(ABC, Generic[T]):
         """ Получить объект по id """
 
     @abstractmethod
-    def get_all(self, where: dict[str, Any] | None = None) -> list[T]:
+    def get_all(self, where: Callable[[Any], bool] = lambda x: True) -> list[T]:
         """
         Получить все записи по некоторому условию
         where - условие в виде словаря {'название_поля': значение}

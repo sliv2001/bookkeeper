@@ -19,20 +19,20 @@ class Presenter(QObject):
     updatedExpense: Signal = Signal(bool)
     updatedBudget: Signal = Signal(bool)
 
-    _pendingCategoryChanges = []
-    _pendingBudgetChanges = []
+    _pendingCategoryChanges: list[list] = []
+    _pendingBudgetChanges: list[list] = []
 
-    _budget_IdPkDict = {}
+    _budget_IdPkDict: dict[int, int] = {}
 
-    def __init__(self, name = None) -> None:
+    def __init__(self, name: str = None) -> None:
         super().__init__()
         self._budgetRepo = BudgetRepository(name)
         self._categoryRepo = CategoryRepository(name)
         self._expenseRepo = ExpenseRepository(name)
 
-    def _getCategoryChildren(self, item):
+    def _getCategoryChildren(self, item: str) -> dict[str, list[str]]:
         # Recursively traverse database and append res, which is dictionary {parent: [children]}
-        res = {}
+        res: dict[str, list[str]] = {}
         parentCat = self._categoryRepo.getByName(item)
         children = [x.name for x in self._categoryRepo.get_all(lambda x: x.parent == parentCat.pk)]
         for child in children:
@@ -45,7 +45,7 @@ class Presenter(QObject):
 
 # TODO replace cat[0], ... with class change
 
-    def _removeCategory(self, cat, topLevels, res):
+    def _removeCategory(self, cat: str, topLevels: list[str], res: dict[str, list[str]]):
         # Remove category
         if cat[0] in topLevels: topLevels.remove(cat[0])
         # Remember entry, for which the removed list is a parent
@@ -59,10 +59,10 @@ class Presenter(QObject):
                 res[parent] += res[key]
                 del res[key]
                 
-    def getCategoriesHierarchy(self):
+    def getCategoriesHierarchy(self) -> tuple[list[str], dict[str, list[str]]]:
         with orm.db_session():
             topLevels = [x.name for x in self._categoryRepo.get_all(lambda x: x.parent == None)]
-            res = {}
+            res: dict[str, list[str]] = {}
             for item in topLevels:
                 #TODO extract function from following:
                 res = dict(list(res.items()) + list(self._getCategoryChildren(item).items()))
@@ -105,12 +105,12 @@ class Presenter(QObject):
                         parentCatPk=self._categoryRepo.getByName(cat[2]).pk
                         self._categoryRepo.add(Category(name=cat[1], parent=parentCatPk))
                 elif cat[1] == None:
-                    # Remove category: rebind children to elder perent
+                    # Remove category: rebind children to elder parent
                     currentCat = Category(name=cat[0])
                     for child in self._categoryRepo.get_all(lambda x: x.parent==currentCat.pk):
                         child.parent = currentCat.parent
                         self._categoryRepo.update(child)
-                    self._categoryRepo.delete()
+                    self._categoryRepo.delete(currentCat.pk)
                 else:
                     # Update category
                     # TODO check for wrong naming
@@ -120,10 +120,10 @@ class Presenter(QObject):
                     self._categoryRepo.update(c)
         self._pendingCategoryChanges = []
     
-    def cancelCategories(self):
+    def cancelCategories(self) -> None:
         self._pendingCategoryChanges = []
 
-    def addExpense(self, category: str, value: int, dt: datetime.datetime, comment: str = None):
+    def addExpense(self, category: str, value: int, dt: datetime.datetime, comment: str = None) -> None:
         with orm.db_session():
             catEntry = self._categoryRepo.getByName(category)
             if comment == None:
@@ -133,7 +133,7 @@ class Presenter(QObject):
             self._expenseRepo.add(exp)
         self.updatedExpense.emit(True)
 
-    def getExpensesInInterval(self, begin: datetime.date, end: datetime.date):
+    def getExpensesInInterval(self, begin: datetime.date, end: datetime.date)-> list[list[datetime.datetime, int, str, str]]:
         beginDT = self.getDateTime_fromDate(begin)
         endDT = self.getDateTime_fromDate(end, ceil=False)
         with orm.db_session():
@@ -141,7 +141,7 @@ class Presenter(QObject):
             return [[item.expense_date, item.amount, item.category.name, item.comment] for item in res]
 
 # TODO remove datetime.datetime
-    def getRecentExpenses(self, days: int):
+    def getRecentExpenses(self, days: int)-> list[list[datetime.datetime, int, str, str]]:
         return self.getExpensesInInterval(datetime.datetime.now()-datetime.timedelta(days=days), datetime.datetime.now())
 
     def getBudgets(self):
@@ -161,7 +161,7 @@ class Presenter(QObject):
                 currentBudgets[i] = self._pendingBudgetChanges[indexToRemove]
                 del changedIndexes[indexToRemove]
         for i in changedIndexes:
-            if not i < 3:
+            if i >= 3:
                 item = next(filter(lambda x: x[3]==i, self._pendingBudgetChanges), None)
                 currentBudgets.append(item)
         return currentBudgets
@@ -191,7 +191,7 @@ class Presenter(QObject):
         self.updatedBudget.emit(True)
 
 #TODO move to utils
-    def getDateTime_fromDate(self, date, ceil = True):
+    def getDateTime_fromDate(self, date: datetime.date, ceil: bool = True) -> datetime.datetime:
         if ceil:
             return datetime.datetime.combine(date, datetime.datetime.min.time())
         else:

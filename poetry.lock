@@ -356,6 +356,17 @@ files = [
 ]
 
 [[package]]
+name = "pony-stubs"
+version = "0.5.2"
+description = "Type stubs for Pony ORM"
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "pony-stubs-0.5.2.tar.gz", hash = "sha256:65a2739d4c6848eb00e5d8c74c8f25a92f960809b011e3138694665f8a4a5adc"},
+    {file = "pony_stubs-0.5.2-py3-none-any.whl", hash = "sha256:c446481b1e6699676e8fc5c22b59429c18e00d1e663990cd98dae843acaf395a"},
+]
+
+[[package]]
 name = "pycodestyle"
 version = "2.10.0"
 description = "Python style guide checker"
@@ -577,6 +588,17 @@ files = [
 ]
 
 [[package]]
+name = "types-python-dateutil"
+version = "2.9.0.20240316"
+description = "Typing stubs for python-dateutil"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "types-python-dateutil-2.9.0.20240316.tar.gz", hash = "sha256:5d2f2e240b86905e40944dd787db6da9263f0deabef1076ddaed797351ec0202"},
+    {file = "types_python_dateutil-2.9.0.20240316-py3-none-any.whl", hash = "sha256:6b8cb66d960771ce5ff974e9dd45e38facb81718cc1e208b10b1baccbfdbee3b"},
+]
+
+[[package]]
 name = "typing-extensions"
 version = "4.4.0"
 description = "Backported and Experimental Type Hints for Python 3.7+"
@@ -673,4 +695,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10,<3.13"
-content-hash = "23a9d959f9bca0a1a435d4c45fabfeee5dcb9903f369d725423b97a3f76015e2"
+content-hash = "e7278c75497455cb588dc2292c95100c1f32aa304bd0d7c671f9c31587c24f13"
