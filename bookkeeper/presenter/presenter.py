@@ -2,6 +2,7 @@ import datetime
 
 from pony import orm
 from PySide6.QtCore import QObject, Signal
+from typing import Any
 
 from bookkeeper.repository.budget_repository import BudgetRepository
 from bookkeeper.repository.category_repository import CategoryRepository
@@ -19,12 +20,12 @@ class Presenter(QObject):
     updatedExpense: Signal = Signal(bool)
     updatedBudget: Signal = Signal(bool)
 
-    _pendingCategoryChanges: list[list] = []
-    _pendingBudgetChanges: list[list] = []
+    _pendingCategoryChanges: list[list[str]] = []
+    _pendingBudgetChanges: list[list[Any]] = []
 
     _budget_IdPkDict: dict[int, int] = {}
 
-    def __init__(self, name: str = None) -> None:
+    def __init__(self, name: str = ':memory:') -> None:
         super().__init__()
         self._budgetRepo = BudgetRepository(name)
         self._categoryRepo = CategoryRepository(name)
@@ -45,12 +46,12 @@ class Presenter(QObject):
 
 # TODO replace cat[0], ... with class change
 
-    def _removeCategory(self, cat: str, topLevels: list[str], res: dict[str, list[str]]):
+    def _removeCategory(self, cat: str, topLevels: list[str], res: dict[str, list[str]]) -> None:
         # Remove category
         if cat[0] in topLevels: topLevels.remove(cat[0])
         # Remember entry, for which the removed list is a parent
         # and rebind to parent of removed list
-        for key, lst in res:
+        for key, lst in res.items():
             if cat[0] in lst:
                 lst.remove(cat[0])
                 parent = key
@@ -85,16 +86,16 @@ class Presenter(QObject):
                     if cat[0] in lst: lst.remove(cat[0])
         return topLevels, res
     
-    def getAllCategories(self):
+    def getAllCategories(self) -> list[str]:
         return self.getCategoriesHierarchy()[1].keys()
 
-    def addCategory(self, cat: str, parent = None):
+    def addCategory(self, cat: str, parent = None) -> None:
         if self._categoryRepo.getByName(cat) != None:
             raise RuntimeError('Entry already exists!')
         self._pendingCategoryChanges.append([None, cat, parent])
         self.updatedCategory.emit(True)
 
-    def commitCategories(self):
+    def commitCategories(self) -> None:
         with orm.db_session:
             for cat in self._pendingCategoryChanges:
                 if cat[0] == None:
@@ -123,17 +124,18 @@ class Presenter(QObject):
     def cancelCategories(self) -> None:
         self._pendingCategoryChanges = []
 
-    def addExpense(self, category: str, value: int, dt: datetime.datetime, comment: str = None) -> None:
+    def addExpense(self, category: str, value: int, dt: datetime.datetime, comment: str = '') -> None:
         with orm.db_session():
             catEntry = self._categoryRepo.getByName(category)
-            if comment == None:
+            if comment == '':
                 exp = Expense(amount=value, category=catEntry, expense_date=dt)
             else:
                 exp = Expense(amount=value, category=catEntry, expense_date=dt, comment=comment)
             self._expenseRepo.add(exp)
         self.updatedExpense.emit(True)
 
-    def getExpensesInInterval(self, begin: datetime.date, end: datetime.date)-> list[list[datetime.datetime, int, str, str]]:
+#TODO replace list with tuple or with class object
+    def getExpensesInInterval(self, begin: datetime.date, end: datetime.date)-> list[list[Any]]:
         beginDT = self.getDateTime_fromDate(begin)
         endDT = self.getDateTime_fromDate(end, ceil=False)
         with orm.db_session():

@@ -44,7 +44,7 @@ class AbstractRepository(ABC, Generic[T]):
         """ Получить объект по id """
 
     @abstractmethod
-    def get_all(self, where: Callable[[Any], bool] = lambda x: True) -> list[T]:
+    def get_all(self, where: Callable[[Any], bool] = lambda x: True) -> Any:
         """
         Получить все записи по некоторому условию
         where - условие в виде словаря {'название_поля': значение}

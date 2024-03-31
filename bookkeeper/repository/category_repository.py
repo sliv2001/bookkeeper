@@ -25,7 +25,7 @@ class CategoryRepository(SqliteRepository[Category]):
             return Category.get(name=name)
 
     
-    def get_all(self, where: Callable[[Any], bool] = lambda x: True) -> list[Category]:
+    def get_all(self, where: Callable[[Any], bool] = lambda x: True) -> Any:
         with orm.db_session:
             return orm.select(obj for obj in Category if where(obj))[:]
 

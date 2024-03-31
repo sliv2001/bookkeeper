@@ -9,8 +9,8 @@ from bookkeeper.repository.category_repository import CategoryRepository
 from bookkeeper.repository.expense_repository import ExpenseRepository
 from bookkeeper.utils import read_tree
 
-cat_repo = CategoryRepository[Category]()
-exp_repo = ExpenseRepository[Expense]()
+cat_repo = CategoryRepository()
+exp_repo = ExpenseRepository()
 
 cats = '''
 продукты

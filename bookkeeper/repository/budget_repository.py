@@ -1,12 +1,12 @@
 from datetime import datetime
-from typing import Callable
+from typing import Callable, Any
 from pony import orm
 
 from bookkeeper.repository.sqlite_repository import *
 from bookkeeper.models.budget import Budget
 
 class BudgetRepository(SqliteRepository[Budget]):
-    def __init__(self, filename=':memory:') -> None:
+    def __init__(self, filename: str = ':memory:') -> None:
         super().__init__(filename)
         with orm.db_session():
             try:
@@ -27,10 +27,8 @@ class BudgetRepository(SqliteRepository[Budget]):
         with orm.db_session:
             return Budget[pk]
     
-    def get_all(self, where: Callable[[Any], bool] = True) -> Any:
+    def get_all(self, where: Callable[[Any], bool] = lambda x: True) -> Any:
         with orm.db_session:
-            if where is True:
-                return orm.select(obj for obj in Budget)[:]
             return orm.select(obj for obj in Budget if where(obj))[:]
         
     def update(self, obj: Budget) -> None:

@@ -1,11 +1,11 @@
 from pony import orm
-from typing import Callable
+from typing import Callable, Any
 
 from bookkeeper.repository.sqlite_repository import *
 from bookkeeper.models.expense import Expense
 
 class ExpenseRepository(SqliteRepository[Expense]):
-    def __init__(self, filename=':memory:') -> None:
+    def __init__(self, filename: str = ':memory:') -> None:
         super().__init__(filename)
 
     def add(self, obj: Expense) -> int:
@@ -18,10 +18,8 @@ class ExpenseRepository(SqliteRepository[Expense]):
         with orm.db_session:
             return Expense.get(pk=pk)
     
-    def get_all(self, where: Callable[[Any], bool] = True) -> Any:
+    def get_all(self, where: Callable[[Any], bool] = lambda x: True) -> Any:
         with orm.db_session:
-            if where is True:
-                return orm.select(obj for obj in Expense)[:]
             return orm.select(obj for obj in Expense if where(obj))[:]
         
     def update(self, obj: Expense) -> None:
