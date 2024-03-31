@@ -67,5 +67,5 @@ def test_get_all_with_condition(repo, custom_class):
         o.test = 'test'
         repo.add(o)
         objects.append(o)
-    assert repo.get_all({'name': '0'}) == [objects[0]]
-    assert repo.get_all({'test': 'test'}) == objects
+    assert repo.get_all(lambda x: x.name == '0') == [objects[0]]
+    assert repo.get_all(lambda x: x.test == 'test') == objects

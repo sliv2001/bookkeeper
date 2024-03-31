@@ -115,7 +115,7 @@ def test_get_all_parents(repo):
     assert isgenerator(gen)
     assert [c.name for c in gen] == ['3', '2', '1', '0']
 
-def test_get_subcategories(repo: CategoryRepository[Category]):
+def test_get_subcategories(repo: CategoryRepository):
     parent_pk = None
     with orm.db_session:
 
