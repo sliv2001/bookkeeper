@@ -1,7 +1,9 @@
 import sys
 import unittest
+
 from PySide6.QtCore import QDateTime
 from PySide6.QtWidgets import QApplication, QDialogButtonBox
+
 from bookkeeper.view.AddUpdateDialog import AddUpdateDialog
 from bookkeeper.presenter.presenter import Presenter
 
@@ -11,20 +13,20 @@ class TestAddUpdateDialog(unittest.TestCase):
     """
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(self):
         """
         Set up the test environment.
         """
-        cls.app = QApplication.instance()
-        if cls.app is None:
-            cls.app = QApplication(sys.argv)
+        self.app = QApplication.instance()
+        if self.app is None:
+            self.app = QApplication(sys.argv)
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(self):
         """
         Clean up after all tests have been run.
         """
-        del cls.app
+        del self.app
 
     def setUp(self):
         """
