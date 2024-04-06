@@ -54,7 +54,7 @@ def test_pk_change():
     pk cannot be changed manually
     """
     with orm.db_session:
-        c = Category(name='name')
+        c = Category(name='name_pk_change')
         try:
             c.pk = 5
         except: pass
@@ -66,7 +66,7 @@ def test_pk_change():
         except: pass
 
     with orm.db_session:
-        assert c.name == 'name'
+        assert c.name == 'name_pk_change'
         assert c.pk == pk
 
 def test_eq():
@@ -74,8 +74,8 @@ def test_eq():
     class should implement __eq__ method
     """
     with orm.db_session:
-        c1 = Category(name='name', parent=1)
-        c2 = Category(name='name', parent=1)
+        c1 = Category(name='name_eq1', parent=1)
+        c2 = Category(name='name_eq2', parent=1)
 
     with orm.db_session:
         c3 = Category[4]
@@ -87,20 +87,20 @@ def test_eq():
 
 def test_get_parent_func(repo):
     with orm.db_session:
-        c1 = Category(name='parent')
+        c1 = Category(name='parent_get_parent_func')
         pk = repo.add(c1)
         orm.commit()
-        c2 = Category(name='name', parent=pk)
+        c2 = Category(name='name_get_parent_func', parent=pk)
         repo.add(c2)
         orm.commit()
         assert c2.get_parent(repo) == c1
 
 def test_get_parent(repo):
     with orm.db_session:
-        c1 = Category(name='parent')
+        c1 = Category(name='name_get_parent_1')
 
     with orm.db_session:
-        c2 = Category(name='name', parent=c1.pk)
+        c2 = Category(name='name_get_parent_2', parent=c1.pk)
 
     with orm.db_session:
         assert c2.parent == c1.pk
@@ -119,7 +119,7 @@ def test_get_subcategories(repo: CategoryRepository):
     parent_pk = None
     with orm.db_session:
 
-        for i in range(5):
+        for i in range(5, 10):
             c = Category(name=str(i), parent=parent_pk)
             parent_pk = repo.add(c)
             orm.commit()
@@ -134,18 +134,18 @@ def test_get_subcategories(repo: CategoryRepository):
 
 @orm.db_session
 def test_create_from_tree(repo):
-    tree = [('parent', None), ('1', 'parent'), ('2', '1')]
+    tree = [('parent_create_from_tree', None), ('parent_create_from_tree_2', 'parent_create_from_tree')]
     cats = Category.create_from_tree(tree, repo)
     assert len(cats) == len(tree)
-    parent = next(c for c in cats if c.name == 'parent')
+    parent = next(c for c in cats if c.name == 'parent_create_from_tree')
     assert parent.parent is None
-    c1 = next(c for c in cats if c.name == '1')
-    assert c1.parent == parent.pk
-    c2 = next(c for c in cats if c.name == '2')
+    c1 = next(c for c in cats if c.name == 'parent_create_from_tree')
+    assert c1.parent == None
+    c2 = next(c for c in cats if c.name == 'parent_create_from_tree_2')
     assert c2.parent == c1.pk
 
 @orm.db_session
 def test_create_from_tree_error(repo):
-    tree = [('1', 'parent'), ('parent', None)]
+    tree = [('1', 'parent_create_from_tree_error'), ('parent_create_from_tree_error', None)]
     with pytest.raises(KeyError):
         Category.create_from_tree(tree, repo)
