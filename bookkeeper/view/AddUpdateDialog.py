@@ -26,10 +26,6 @@ class AddUpdateDialog(QDialog):
         self.presenter.updatedCategory.connect(self.updateAll)
         self.presenter.updatedExpense.connect(self.updateAll)
 
-    @Slot()
-    def on_pushButton_clicked(self):
-        QMessageBox.warning(self, 'Implementation Error', 'This feature is not implemented yet!')
-
     def updateOkButton(self):
         self.ui.buttonBox.button(QDialogButtonBox.StandardButton.Ok).setEnabled(self.ui.spinBox.value() > 0 and self.ui.comboBox.currentIndex() > -1)
     

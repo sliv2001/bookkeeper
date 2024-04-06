@@ -38,3 +38,7 @@ class CategoryRepository(SqliteRepository[Category]):
     def delete(self, pk: int) -> None:
         with orm.db_session:
             Category[pk].delete()
+
+    def deleteALL(self):
+        with orm.db_session:
+            orm.delete(obj for obj in Category)

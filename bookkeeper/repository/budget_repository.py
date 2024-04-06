@@ -38,3 +38,7 @@ class BudgetRepository(SqliteRepository[Budget]):
     def delete(self, pk: int) -> None:
         with orm.db_session:
             Budget[pk].delete()
+
+    def deleteALL(self):
+        with orm.db_session:
+            orm.delete(obj for obj in Budget if obj.pk > 3)

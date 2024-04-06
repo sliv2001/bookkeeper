@@ -224,3 +224,9 @@ class Presenter(QObject):
 
     def cancelBudget(self):
         self._pendingBudgetChanges = []
+
+    def deleteALL(self):
+        with orm.db_session:
+            self._budgetRepo.deleteALL()
+            self._categoryRepo.deleteALL()
+            self._expenseRepo.deleteALL()

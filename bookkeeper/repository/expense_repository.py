@@ -29,3 +29,7 @@ class ExpenseRepository(SqliteRepository[Expense]):
     def delete(self, pk: int) -> None:
         with orm.db_session:
             Expense[pk].delete()
+
+    def deleteALL(self):
+        with orm.db_session:
+            orm.delete(obj for obj in Expense)
