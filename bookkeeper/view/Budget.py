@@ -10,23 +10,23 @@ from bookkeeper.presenter.presenter import Presenter
 
 class BudgetView(QDialog):
 
-    presenter: Presenter
+    _presenter: Presenter
 
     _updateAllowed: bool = False
 
     def __init__(self, presenter: Presenter = None, parent: QWidget | None = ..., flags: Qt.WindowType = ...) -> None:
         super(BudgetView, self).__init__()
         if presenter == None:
-            self.presenter = parent.presenter
+            self._presenter = parent.presenter
         else:
-            self.presenter = presenter
+            self._presenter = presenter
         self.ui = Ui_BudgetWindow()
         self.ui.setupUi(self)
         self.ui.dateEdit.setDateTime(QDateTime.currentDateTime())
         self.ui.dateEdit_2.setDateTime(QDateTime.currentDateTime())
         self.updateBudget()
         self._updateAllowed = True
-        self.presenter.updatedBudget.connect(self.updateBudget)
+        self._presenter.updatedBudget.connect(self.updateBudget)
 
     @Slot()
     def on_pushButton_clicked(self):
@@ -35,19 +35,19 @@ class BudgetView(QDialog):
         if (dateStart > dateEnd):
             raise RuntimeWarning('Starting time cannot be greater than ending time')
         else:
-            self.presenter.addBudget(dateStart,
+            self._presenter.addBudget(dateStart,
                                     dateEnd,
                                     self.ui.spinBox.value(),
                                     self.ui.tableWidget.rowCount())
 
     @Slot()
     def accept(self) -> None:
-        self.presenter.commitBudget()
+        self._presenter.commitBudget()
         return super().accept()
 
     @Slot()
     def reject(self) -> None:
-        self.presenter.cancelBudget()
+        self._presenter.cancelBudget()
         return super().reject()
     
     @Slot()
@@ -57,7 +57,7 @@ class BudgetView(QDialog):
     @Slot(QTableWidgetItem)
     def on_tableWidget_itemChanged(self, item: QTableWidgetItem):
         if self._updateAllowed and item.column()==2: # Plan
-            self.presenter.updateBudget(item.row(), int(item.text()))
+            self._presenter.updateBudget(item.row(), int(item.text()))
 
     def appendBudgetEntry(self, index: int, start: datetime, end: datetime, plan: int):
         self._updateAllowed = False
@@ -70,7 +70,7 @@ class BudgetView(QDialog):
         entryPlan = QTableWidgetItem(str(plan))
         self.ui.tableWidget.setItem(index, 2, entryPlan)
 
-        expenseList = [int(amount[1]) for amount in self.presenter.getExpensesInInterval(start, end)]
+        expenseList = [int(amount[1]) for amount in self._presenter.getExpensesInInterval(start, end)]
         expenses = sum(expenseList)
         entrySlack = QTableWidgetItem(str(plan-expenses))
         entrySlack.setFlags(~Qt.ItemFlag.ItemIsEditable)
@@ -92,18 +92,18 @@ class BudgetView(QDialog):
 
     @Slot()
     def updateBudget(self):
-        entries = self.presenter.getBudgets()
+        entries = self._presenter.getBudgets()
         self.ui.tableWidget.setRowCount(len(entries)+3)
         
         #TODO make that compact
-        self.appendBudgetEntry(0, datetime.today(), datetime.today(), self.presenter.getBudget(1))
+        self.appendBudgetEntry(0, datetime.today(), datetime.today(), self._presenter.getBudget(1))
 
         # TODO move these to utils
         weekBegin, weekEnd = self.getWeekBorders(datetime.now())
-        self.appendBudgetEntry(1, weekBegin, weekEnd, self.presenter.getBudget(2))
+        self.appendBudgetEntry(1, weekBegin, weekEnd, self._presenter.getBudget(2))
 
         monthBegin, monthEnd = self.getMonthBorders(datetime.now())
-        self.appendBudgetEntry(2, monthBegin, monthEnd, self.presenter.getBudget(3))
+        self.appendBudgetEntry(2, monthBegin, monthEnd, self._presenter.getBudget(3))
 
         self.ui.tableWidget.resizeColumnsToContents()
         self.ui.tableWidget.resizeRowsToContents()
