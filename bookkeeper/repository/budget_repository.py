@@ -9,13 +9,15 @@ class BudgetRepository(SqliteRepository[Budget]):
     def __init__(self, filename: str = ':memory:') -> None:
         super().__init__(filename)
         with orm.db_session():
-            try:
-                b = Budget.get(pk=1)
-            except orm.ObjectNotFound:
-                # Initialize daily, weekly, monthly
-                b0 = Budget(start = datetime.now(), expiration = datetime.now(), amount=100)
-                b1 = Budget(start = datetime.now(), expiration = datetime.now(), amount=1000)
-                b2 = Budget(start = datetime.now(), expiration = datetime.now(), amount=10000)
+            self._create_budget_initial_entry(1, 100)
+            self._create_budget_initial_entry(2, 1000)
+            self._create_budget_initial_entry(3, 10000)
+
+
+    def _create_budget_initial_entry(self, pk, amount):
+        b = Budget.get(pk=pk)
+        if b == None:
+            b0 = Budget(pk=pk, start = datetime.now(), expiration = datetime.now(), amount=amount)
 
     def add(self, obj: Budget) -> int:
         with orm.db_session:
