@@ -1,7 +1,10 @@
+"""
+The module contains dialog for adding or updating expense entries.
+"""
 import datetime
 
 from PySide6.QtCore import Qt, Slot, QDateTime
-from PySide6.QtWidgets import QDialog, QWidget, QMessageBox, QDialogButtonBox
+from PySide6.QtWidgets import QDialog, QWidget, QDialogButtonBox
 
 from bookkeeper.view.Ui_AddUpdateDialog import Ui_AddUpdateDialog
 from bookkeeper.presenter.presenter import Presenter
@@ -21,7 +24,8 @@ class AddUpdateDialog(QDialog):
 
     cats: list
 
-    def __init__(self, presenter: Presenter = None, parent: QWidget | None = ..., flags: Qt.WindowType = ...) -> None:
+    def __init__(self, presenter: Presenter = None,
+                 parent: QWidget | None = ...) -> None:
         """
         Initializes the AddUpdateDialog.
 
@@ -30,8 +34,8 @@ class AddUpdateDialog(QDialog):
             parent (QWidget | None, optional): Parent widget. Defaults to ... (None).
             flags (Qt.WindowType, optional): Window flags. Defaults to Qt.WindowType.
         """
-        super(AddUpdateDialog, self).__init__()
-        if presenter == None:
+        super().__init__()
+        if presenter is None:
             self.presenter = parent.presenter
         else:
             self.presenter = presenter
@@ -42,25 +46,27 @@ class AddUpdateDialog(QDialog):
         self.presenter.updatedCategory.connect(self.updateAll)
         self.presenter.updatedExpense.connect(self.updateAll)
 
-    def updateOkButton(self):
+    def UpdateOkButton(self):
         """
         Update the state of the OK button based on input validity.
         """
-        self.ui.buttonBox.button(QDialogButtonBox.StandardButton.Ok).setEnabled(self.ui.spinBox.value() > 0 and self.ui.comboBox.currentIndex() > -1)
-    
+        self.ui.buttonBox.button(QDialogButtonBox.StandardButton.Ok).setEnabled(
+            self.ui.spinBox.value() > 0 and self.ui.comboBox.currentIndex() > -1
+        )
+
     @Slot()
     def on_spinBox_textChanged(self):
         """
         Slot handling the change in spin box text.
         """
-        self.updateOkButton()
+        self.UpdateOkButton()
 
     @Slot()
     def on_comboBox_currentIndexChanged(self):
         """
         Slot handling the change in combo box selection.
         """
-        self.updateOkButton()
+        self.UpdateOkButton()
 
     @Slot()
     def on_pushButton_clicked(self):
@@ -72,7 +78,6 @@ class AddUpdateDialog(QDialog):
 
     @Slot()
     def accept(self) -> None:
-        # TODO add removeExpense to presenter
 
         """
         Slot handling the acceptance of the dialog.
@@ -90,7 +95,6 @@ class AddUpdateDialog(QDialog):
         Slot handling the rejection of the dialog.
         """
         return super().reject()
-        # TODO add removeExpense to presenter
 
     @Slot()
     def updateAll(self) -> None:
@@ -101,4 +105,4 @@ class AddUpdateDialog(QDialog):
         self.ui.comboBox.setEnabled(len(self.cats) > 0)
         self.ui.comboBox.clear()
         self.ui.comboBox.insertItems(0, self.cats)
-        self.updateOkButton()
+        self.UpdateOkButton()

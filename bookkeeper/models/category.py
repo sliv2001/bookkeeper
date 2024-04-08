@@ -6,10 +6,10 @@ Classes:
 
     Usage: this is utility class used within categoryRepo
 """
-from pony import orm
-from datetime import datetime
 from typing import Iterator
 from collections import defaultdict
+
+from pony import orm
 
 from ..repository.abstract_repository import AbstractRepository
 from bookkeeper.models.database import db
@@ -93,15 +93,15 @@ class Category(db.Entity):
         def get_children(graph: dict[int | None, list['Category']],
                          root: int) -> Iterator['Category']:
             """ dfs in graph from root """
-            for x in graph[root]:
-                yield x
-                yield from get_children(graph, x.prim_key)
+            for category in graph[root]:
+                yield category
+                yield from get_children(graph, category.prim_key)
 
         subcats = defaultdict(list)
         for cat in repo.get_all():
             subcats[cat.parent].append(cat)
         return get_children(subcats, self.prim_key)
-    
+
     @classmethod
     def create_from_tree(
             cls,

@@ -60,18 +60,18 @@ class TestAddUpdateDialog(unittest.TestCase):
         self.dialog.ui.spinBox.setValue(10)
         self.dialog.ui.comboBox.addItem("Category 1")
         self.dialog.ui.comboBox.setCurrentIndex(0)
-        self.dialog.updateOkButton()
+        self.dialog.UpdateOkButton()
         self.assertTrue(self.dialog.ui.buttonBox.button(QDialogButtonBox.StandardButton.Ok).isEnabled())
 
         # Test when spinBox value is 0
         self.dialog.ui.spinBox.setValue(0)
-        self.dialog.updateOkButton()
+        self.dialog.UpdateOkButton()
         self.assertFalse(self.dialog.ui.buttonBox.button(QDialogButtonBox.StandardButton.Ok).isEnabled())
 
         # Test when comboBox currentIndex is -1
         self.dialog.ui.spinBox.setValue(10)
         self.dialog.ui.comboBox.setCurrentIndex(-1)
-        self.dialog.updateOkButton()
+        self.dialog.UpdateOkButton()
         self.assertFalse(self.dialog.ui.buttonBox.button(QDialogButtonBox.StandardButton.Ok).isEnabled())
 
     def test_updateAll(self):
