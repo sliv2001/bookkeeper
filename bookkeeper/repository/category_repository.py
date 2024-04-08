@@ -73,7 +73,8 @@ class CategoryRepository(SqliteRepository[Category]):
         Retrieves all Category objects from the database.
 
         Args:
-            where (Callable[[Any], bool], optional): Filter function. Defaults to lambda x: True.
+            where (Callable[[Any], bool], optional): Filter function.
+            Defaults to lambda x: True.
 
         Returns:
             Any: List of Category objects.
@@ -91,7 +92,6 @@ class CategoryRepository(SqliteRepository[Category]):
         """
         with orm.db_session:
             orm.commit()
-
 
     def delete(self, prim_key: int) -> None:
         """

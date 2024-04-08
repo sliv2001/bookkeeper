@@ -19,7 +19,7 @@ class MemoryRepository(AbstractRepository[T]):
 
     def add(self, obj: T) -> int:
         if getattr(obj, 'prim_key', None) != 0:
-            raise ValueError(f'trying to add object {obj} with filled `prim_key` attribute')
+            raise ValueError(f'trying to add object {obj} with filled `pk` attribute')
         prim_key = next(self._counter)
         self._container[prim_key] = obj
         obj.prim_key = prim_key

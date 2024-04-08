@@ -1,6 +1,8 @@
 """
-This module defines the Presenter class, which acts as an intermediary between the UI and repositories.
-It handles logic of the application, such as managing categories, expenses, and budgets.
+This module defines the Presenter class, which acts
+as an intermediary between the UI and repositories.
+It handles logic of the application, such as managing
+categories, expenses, and budgets.
 
 Classes:
     Presenter: Intermediary class between UI and repositories.
@@ -16,7 +18,9 @@ Usage:
     presenter.addCategory("Food")
     presenter.commitCategories()
     presenter.addExpense("Food", 50, datetime.datetime.now())
-    presenter.addBudget(datetime.datetime.now(), datetime.datetime.now(), 100, 1)
+    presenter.addBudget(datetime.datetime.now(),
+        datetime.datetime.now(), 100, 1
+    )
     presenter.commitBudget()
 """
 import datetime
@@ -91,7 +95,8 @@ class Presenter(QObject):
                 #TODO extract function from following:
                 res = dict(list(res.items()) + list(next_children.items()))
                 #TODO extract function from following:
-        return dict(list({item: children}.items()) + list(res.items()))
+        return dict(list({item: children}.items())
+                    + list(res.items()))
 
 # TODO replace cat[0], ... with class change
 
@@ -124,7 +129,7 @@ class Presenter(QObject):
             tuple: Tuple containing a list of top-level categories and a dictionary representing category hierarchy.
         """
         with orm.db_session():
-            topLevels = [x.name for x in self._categoryRepo.get_all(lambda x: x.parent == None)]
+            topLevels = [x.name for x in self._categoryRepo.get_all(lambda x: x.parent is None)]
             res: dict[str, list[str]] = {}
             for item in topLevels:
                 #TODO extract function from following:
@@ -132,14 +137,14 @@ class Presenter(QObject):
 
         # After collection we need to apply changes, if any
         for cat in self._pendingCategoryChanges:
-            if cat[0] == None:
+            if cat[0] is None:
                 # Add new category
                 if cat[2]!=None:
                     res[cat[2]]+=[cat[1]]
                 else:
                     topLevels+={cat[1]}
                 res[cat[1]]=[]
-            elif cat[1] == None:
+            elif cat[1] is None:
                 self._removeCategory(cat, topLevels, res)
             else:
                 # Rename category
@@ -176,14 +181,14 @@ class Presenter(QObject):
         """
         with orm.db_session:
             for cat in self._pendingCategoryChanges:
-                if cat[0] == None:
+                if cat[0] is None:
                     # Add new category
-                    if cat[2]==None:
+                    if cat[2] is None:
                         self._categoryRepo.add(Category(name=cat[1]))
                     else:
                         parentCatprim_key=self._categoryRepo.get_by_name(cat[2]).prim_key
                         self._categoryRepo.add(Category(name=cat[1], parent=parentCatprim_key))
-                elif cat[1] == None:
+                elif cat[1] is None:
                     # Remove category: rebind children to elder parent
                     currentCat = Category(name=cat[0])
                     for child in self._categoryRepo.get_all(lambda x: x.parent==currentCat.prim_key):
@@ -367,7 +372,7 @@ class Presenter(QObject):
                     budgetEntry.expiration = datetime.datetime.combine(budget[1], datetime.datetime.min.time())
                     budgetEntry.amount = budget[2]
                     self._budgetRepo.update(budgetEntry)
-                elif budget[2]==None:
+                elif budget[2] is None:
                     # Remove
                     self._budgetRepo.delete(budget[3])
                 else:

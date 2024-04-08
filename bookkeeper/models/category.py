@@ -14,6 +14,7 @@ from pony import orm
 from ..repository.abstract_repository import AbstractRepository
 from bookkeeper.models.database import db
 
+
 class Category(db.Entity):
 
     """

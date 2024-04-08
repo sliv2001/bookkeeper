@@ -1,14 +1,12 @@
-from datetime import datetime
-
 from PySide6.QtCore import Qt, Slot
-from PySide6.QtWidgets import QMainWindow, QWidget, QMessageBox, QDialog, QTableWidgetItem, QTableWidget
-from PySide6.QtGui import QAction
+from PySide6.QtWidgets import QMainWindow, QWidget, QTableWidgetItem
 
 from bookkeeper.view.Ui_MainWindow import Ui_MainWindow
 from bookkeeper.view.Budget import BudgetView
 from bookkeeper.view.AddUpdateDialog import AddUpdateDialog
 from bookkeeper.view.Category import CategoryDialog
 from bookkeeper.presenter.presenter import Presenter
+
 
 class MainWindow(QMainWindow):
     """
@@ -21,7 +19,6 @@ class MainWindow(QMainWindow):
         categoryView (CategoryDialog): Category management dialog.
         presenter (Presenter): Presenter object.
     """
-
 
     ui: QMainWindow
     budgetView: BudgetView
@@ -68,7 +65,6 @@ class MainWindow(QMainWindow):
         self.categoryView = CategoryDialog(parent=self)
         self.categoryView.show()
 
-#TODO replace list with class
     @Slot()
     def updateMainView(self) -> None:
         """
@@ -98,4 +94,5 @@ class MainWindow(QMainWindow):
         self.ui.tableWidget.resizeColumnsToContents()
         self.ui.tableWidget.resizeRowsToContents()
 
-        self.ui.summary.setText('Итого: ' + str(res) + '₽ за последние ' + str(days) +' дней')
+        self.ui.summary.setText('Итого: ' + str(res) +
+                                '₽ за последние ' + str(days) + ' дней')

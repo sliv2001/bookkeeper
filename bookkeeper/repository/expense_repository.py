@@ -6,6 +6,7 @@ from pony import orm
 from bookkeeper.repository.sqlite_repository import SqliteRepository
 from bookkeeper.models.expense import Expense
 
+
 class ExpenseRepository(SqliteRepository[Expense]):
     """
     Repository for managing Expense objects in the database.

@@ -1,8 +1,9 @@
-from PySide6.QtCore import Qt, Slot, Signal
-from PySide6.QtWidgets import QDialog, QWidget, QMessageBox, QInputDialog, QTreeWidgetItem
+from PySide6.QtCore import Slot
+from PySide6.QtWidgets import QDialog, QWidget, QInputDialog, QTreeWidgetItem
 
 from bookkeeper.view.Ui_Category import Ui_CategoryDialog
 from bookkeeper.presenter.presenter import Presenter
+
 
 class CategoryDialog(QDialog):
     """
@@ -18,28 +19,30 @@ class CategoryDialog(QDialog):
     topLevels: list[str]
     dictOfAll: dict[str, list[str]]
 
-    def displayCategories(self, parentWidget : QTreeWidgetItem = None):
+    def displayCategories(self, parentWidget: QTreeWidgetItem = None):
         """
         Display categories in the tree widget.
 
         Args:
             parentWidget (QTreeWidgetItem, optional): Parent widget. Defaults to None.
         """
-        if parentWidget == None:
+        if parentWidget is None:
             childrenList = self.topLevels
         else:
             childrenList = self.dictOfAll[parentWidget.text(0)]
-            if childrenList==[]:
+            if childrenList == []:
                 return
         for item in childrenList:
-            if parentWidget==None:
+            if parentWidget is None:
                 treeItem = QTreeWidgetItem(self.ui.treeWidget)
             else:
                 treeItem = QTreeWidgetItem(parentWidget)
             treeItem.setText(0, item)
             self.displayCategories(treeItem)
 
-    def __init__(self, presenter: Presenter = None, parent: QWidget | None = ..., flags: Qt.WindowType = ...) -> None:
+    def __init__(self, presenter: Presenter = None,
+                 parent: QWidget | None = ...
+    ) -> None:
         """
         Initializes the CategoryDialog.
 
@@ -49,7 +52,7 @@ class CategoryDialog(QDialog):
             flags (Qt.WindowType, optional): Window flags. Defaults to Qt.WindowType.
         """
         super(CategoryDialog, self).__init__()
-        if presenter == None:
+        if presenter is None:
             self.presenter = parent.presenter
         else:
             self.presenter = presenter
@@ -58,7 +61,6 @@ class CategoryDialog(QDialog):
         self.presenter.updatedCategory.connect(self.updateAll)
         self.updateAll()
 
-
     @Slot()
     def on_pushButton_clicked(self):
         """
@@ -66,10 +68,13 @@ class CategoryDialog(QDialog):
         """
         newCat, res = QInputDialog.getText(self, 'New category', 'Name new category: ')
         if res and len(newCat) > 0:
-            if len(self.dictOfAll.keys())>0:
-                parentCat, res = QInputDialog.getItem(self, 'Parent category', 'Choose parent category', list(self.dictOfAll.keys()) + ['None'])
+            if len(self.dictOfAll.keys()) > 0:
+                parentCat, res = QInputDialog.getItem(self,
+                                                'Parent category',
+                                                'Choose parent category',
+                                                list(self.dictOfAll.keys()) + ['None'])
                 if res:
-                    if parentCat=='None':
+                    if parentCat == 'None':
                         self.presenter.addCategory(newCat)
                     else:
                         self.presenter.addCategory(newCat, parentCat)
@@ -100,5 +105,3 @@ class CategoryDialog(QDialog):
         self.ui.treeWidget.clear()
         self.topLevels, self.dictOfAll = self.presenter.getCategoriesHierarchy()
         self.displayCategories()
-
-        # TODO complete deletion, renaming, updating categories

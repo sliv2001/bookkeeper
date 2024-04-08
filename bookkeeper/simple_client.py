@@ -25,9 +25,9 @@ cats = '''
 with orm.db_session:
     created: dict[str, Category] = {}
     for child, parent in read_tree(cats):
-        cat = Category(name=child,
-                       parent=
-                       (created[parent].prim_key if parent is not None else None), )
+        cat = Category(
+            name=child,
+            parent=(created[parent].prim_key if parent is not None else None), )
         cat_repo.add(cat)
         created[child] = cat
 

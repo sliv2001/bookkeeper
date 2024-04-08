@@ -140,7 +140,7 @@ def test_create_from_tree(repo):
     parent = next(c for c in cats if c.name == 'parent_create_from_tree')
     assert parent.parent is None
     c1 = next(c for c in cats if c.name == 'parent_create_from_tree')
-    assert c1.parent == None
+    assert c1.parent is None
     c2 = next(c for c in cats if c.name == 'parent_create_from_tree_2')
     assert c2.parent == c1.prim_key
 

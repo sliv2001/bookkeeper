@@ -1,14 +1,13 @@
 """
 The module contains dialog for adding or updating expense entries.
 """
-import datetime
-
-from PySide6.QtCore import Qt, Slot, QDateTime
+from PySide6.QtCore import Slot, QDateTime
 from PySide6.QtWidgets import QDialog, QWidget, QDialogButtonBox
 
 from bookkeeper.view.Ui_AddUpdateDialog import Ui_AddUpdateDialog
 from bookkeeper.presenter.presenter import Presenter
 from bookkeeper.view.Category import CategoryDialog
+
 
 class AddUpdateDialog(QDialog):
     """

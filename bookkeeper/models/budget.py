@@ -11,6 +11,7 @@ from datetime import datetime
 
 from bookkeeper.models.database import db
 
+
 class Budget(db.Entity):
 
     """

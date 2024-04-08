@@ -2,11 +2,12 @@ from datetime import datetime, timedelta
 from dateutil import relativedelta
 
 from PySide6.QtCore import Qt, Slot, QDateTime
-from PySide6.QtWidgets import QDialog, QWidget, QMessageBox, QTableWidgetItem
-from PySide6.QtGui import QAction, QColor
+from PySide6.QtWidgets import QDialog, QWidget, QTableWidgetItem
+from PySide6.QtGui import QColor
 
 from bookkeeper.view.Ui_Budget import Ui_BudgetWindow
 from bookkeeper.presenter.presenter import Presenter
+
 
 class BudgetView(QDialog):
     """
@@ -22,7 +23,8 @@ class BudgetView(QDialog):
 
     _updateAllowed: bool = False
 
-    def __init__(self, presenter: Presenter = None, parent: QWidget | None = ..., flags: Qt.WindowType = ...) -> None:
+    def __init__(self, presenter: Presenter = None,
+                 parent: QWidget | None = ...) -> None:
         """
         Initializes the BudgetView dialog.
 
@@ -32,7 +34,7 @@ class BudgetView(QDialog):
             flags (Qt.WindowType, optional): Window flags. Defaults to Qt.WindowType.
         """
         super(BudgetView, self).__init__()
-        if presenter == None:
+        if presenter is None:
             self._presenter = parent.presenter
         else:
             self._presenter = presenter
@@ -54,10 +56,10 @@ class BudgetView(QDialog):
         if (dateStart > dateEnd):
             raise RuntimeWarning('Starting time cannot be greater than ending time')
         else:
-            self._presenter.addBudget(dateStart,
-                                    dateEnd,
-                                    self.ui.spinBox.value(),
-                                    self.ui.tableWidget.rowCount())
+            self._presenter.addBudget(  dateStart,
+                                        dateEnd,
+                                        self.ui.spinBox.value(),
+                                        self.ui.tableWidget.rowCount())
 
     @Slot()
     def accept(self) -> None:
@@ -87,7 +89,7 @@ class BudgetView(QDialog):
         """
         Slot handling the change in table widget item.
         """
-        if self._updateAllowed and item.column() == 2: # Plan
+        if self._updateAllowed and item.column() == 2:
             self._presenter.updateBudget(item.row(), int(item.text()))
 
     def appendBudgetEntry(self, index: int, start: datetime, end: datetime, plan: int):
@@ -110,7 +112,8 @@ class BudgetView(QDialog):
         entryPlan = QTableWidgetItem(str(plan))
         self.ui.tableWidget.setItem(index, 2, entryPlan)
 
-        expenseList = [int(amount[1]) for amount in self._presenter.getExpensesInInterval(start, end)]
+        expenseList = [int(amount[1]) for amount in
+                       self._presenter.getExpensesInInterval(start, end)]
         expenses = sum(expenseList)
         entrySlack = QTableWidgetItem(str(plan-expenses))
         entrySlack.setFlags(~Qt.ItemFlag.ItemIsEditable)
@@ -118,7 +121,6 @@ class BudgetView(QDialog):
             entrySlack.setBackground(QColor('red'))
         self.ui.tableWidget.setItem(index, 3, entrySlack)
         self._updateAllowed = True
-
 
     def getWeekBorders(self, dt: datetime):
         """
@@ -130,8 +132,8 @@ class BudgetView(QDialog):
         Returns:
             Tuple[datetime, datetime]: Start and end dates of the week.
         """
-        start = dt - timedelta(days = dt.weekday())
-        end = start + timedelta(days = 6)
+        start = dt - timedelta(days=dt.weekday())
+        end = start + timedelta(days=6)
         return start, end
 
     def getMonthBorders(self, dt: datetime):
@@ -156,8 +158,9 @@ class BudgetView(QDialog):
         entries = self._presenter.getBudgets()
         self.ui.tableWidget.setRowCount(len(entries)+3)
 
-        #TODO make that compact
-        self.appendBudgetEntry(0, datetime.today(), datetime.today(), self._presenter.getBudget(1))
+        self.appendBudgetEntry(0, datetime.today(),
+                               datetime.today(),
+                               self._presenter.getBudget(1))
 
         # TODO move these to utils
         weekBegin, weekEnd = self.getWeekBorders(datetime.now())
