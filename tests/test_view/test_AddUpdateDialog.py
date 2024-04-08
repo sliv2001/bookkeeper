@@ -33,7 +33,7 @@ class TestAddUpdateDialog(unittest.TestCase):
         Set up before each test.
         """
         self.presenter = Presenter()
-        self.presenter.deleteALL()
+        self.presenter.delete_all()
         self.dialog = AddUpdateDialog(self.presenter)
 
     def tearDown(self):

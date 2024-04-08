@@ -19,7 +19,7 @@ class Category(db.Entity):
     """
     Primary key.
     """
-    pk = orm.PrimaryKey(int, auto=True)
+    prim_key = orm.PrimaryKey(int, auto=True)
 
     """
     Unique name of category.
@@ -95,12 +95,12 @@ class Category(db.Entity):
             """ dfs in graph from root """
             for x in graph[root]:
                 yield x
-                yield from get_children(graph, x.pk)
+                yield from get_children(graph, x.prim_key)
 
         subcats = defaultdict(list)
         for cat in repo.get_all():
             subcats[cat.parent].append(cat)
-        return get_children(subcats, self.pk)
+        return get_children(subcats, self.prim_key)
     
     @classmethod
     def create_from_tree(
@@ -129,7 +129,7 @@ class Category(db.Entity):
         """
         created: dict[str, Category] = {}
         for child, parent in tree:
-            cat = cls(name=child, parent=created[parent].pk if parent is not None else None)
+            cat = cls(name=child, parent=created[parent].prim_key if parent is not None else None)
             repo.add(cat)
             created[child] = cat
         return list(created.values())

@@ -1,7 +1,9 @@
-from pony import orm
+"""
+This module describes repository for managing Expense objects in the database.
+"""
 from typing import Callable, Any
-
-from bookkeeper.repository.sqlite_repository import *
+from pony import orm
+from bookkeeper.repository.sqlite_repository import SqliteRepository
 from bookkeeper.models.expense import Expense
 
 class ExpenseRepository(SqliteRepository[Expense]):
@@ -34,21 +36,22 @@ class ExpenseRepository(SqliteRepository[Expense]):
         with orm.db_session:
             instance = obj
             orm.commit()
-            return instance.pk
+            return instance.prim_key
 
-    def get(self, pk: int)-> Any:
+    def get(self, prim_key: int)-> Any:
         """
         Retrieves an Expense object from the database by its primary key.
 
         Args:
-            pk (int): Primary key of the Expense object.
+            prim_key (int): Primary key of the Expense object.
 
         Returns:
             Any: Expense object corresponding to the primary key.
         """
         with orm.db_session:
-            return Expense.get(pk=pk)
+            return Expense.get(prim_key=prim_key)
 
+    @orm.db_session
     def get_all(self, where: Callable[[Any], bool] = lambda x: True) -> Any:
         """
         Retrieves all Expense objects from the database.
@@ -72,17 +75,17 @@ class ExpenseRepository(SqliteRepository[Expense]):
         with orm.db_session:
             orm.commit()
 
-    def delete(self, pk: int) -> None:
+    def delete(self, prim_key: int) -> None:
         """
         Deletes an Expense object from the database by its primary key.
 
         Args:
-            pk (int): Primary key of the Expense object to be deleted.
+            prim_key (int): Primary key of the Expense object to be deleted.
         """
         with orm.db_session:
-            Expense[pk].delete()
+            Expense[prim_key].delete()
 
-    def deleteALL(self):
+    def delete_all(self):
         """
         Deletes all Expense objects from the database.
         """

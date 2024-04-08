@@ -13,11 +13,11 @@ def b_repo():
 def test_add_get(b_repo):
     with orm.db_session:
         res = Budget(expiration=datetime.now(), amount=1000)
-        res_pk = b_repo.add(res)
+        res_prim_key = b_repo.add(res)
 
-    res1 = b_repo.get(res_pk)
-    assert res_pk != None
-    assert res1.pk == res.pk
+    res1 = b_repo.get(res_prim_key)
+    assert res_prim_key != None
+    assert res1.prim_key == res.prim_key
     assert res1.amount == res.amount
     assert res1.expiration == res.expiration
     assert res1.start == res.start

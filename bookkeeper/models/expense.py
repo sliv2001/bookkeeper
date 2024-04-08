@@ -17,7 +17,7 @@ class Expense(db.Entity):
     """
     Primary key.
     """
-    pk = orm.PrimaryKey(int, auto=True)
+    prim_key = orm.PrimaryKey(int, auto=True)
 
     """
     Amount of money spent within the current expense.

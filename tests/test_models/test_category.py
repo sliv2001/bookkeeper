@@ -49,25 +49,25 @@ def test_reassign():
     with orm.db_session:
         assert c.name == 'test'
 
-def test_pk_change():
+def test_prim_key_change():
     """
-    pk cannot be changed manually
+    prim_key cannot be changed manually
     """
     with orm.db_session:
-        c = Category(name='name_pk_change')
+        c = Category(name='name_prim_key_change')
         try:
-            c.pk = 5
+            c.prim_key = 5
         except: pass
 
     with orm.db_session:
-        pk = c.pk
+        prim_key = c.prim_key
         try:
-            c.pk = 7
+            c.prim_key = 7
         except: pass
 
     with orm.db_session:
-        assert c.name == 'name_pk_change'
-        assert c.pk == pk
+        assert c.name == 'name_prim_key_change'
+        assert c.prim_key == prim_key
 
 def test_eq():
     """
@@ -88,9 +88,9 @@ def test_eq():
 def test_get_parent_func(repo):
     with orm.db_session:
         c1 = Category(name='parent_get_parent_func')
-        pk = repo.add(c1)
+        prim_key = repo.add(c1)
         orm.commit()
-        c2 = Category(name='name_get_parent_func', parent=pk)
+        c2 = Category(name='name_get_parent_func', parent=prim_key)
         repo.add(c2)
         orm.commit()
         assert c2.get_parent(repo) == c1
@@ -100,28 +100,28 @@ def test_get_parent(repo):
         c1 = Category(name='name_get_parent_1')
 
     with orm.db_session:
-        c2 = Category(name='name_get_parent_2', parent=c1.pk)
+        c2 = Category(name='name_get_parent_2', parent=c1.prim_key)
 
     with orm.db_session:
-        assert c2.parent == c1.pk
+        assert c2.parent == c1.prim_key
 
 @orm.db_session
 def test_get_all_parents(repo):
-    parent_pk = None
+    parent_prim_key = None
     for i in range(5):
-        c = Category(name=str(i), parent=parent_pk)
-        parent_pk = repo.add(c)
+        c = Category(name=str(i), parent=parent_prim_key)
+        parent_prim_key = repo.add(c)
     gen = c.get_all_parents(repo)
     assert isgenerator(gen)
     assert [c.name for c in gen] == ['3', '2', '1', '0']
 
 def test_get_subcategories(repo: CategoryRepository):
-    parent_pk = None
+    parent_prim_key = None
     with orm.db_session:
 
         for i in range(5, 10):
-            c = Category(name=str(i), parent=parent_pk)
-            parent_pk = repo.add(c)
+            c = Category(name=str(i), parent=parent_prim_key)
+            parent_prim_key = repo.add(c)
             orm.commit()
 
         c = repo.get_all(lambda x: x.name == '0')[0]
@@ -142,7 +142,7 @@ def test_create_from_tree(repo):
     c1 = next(c for c in cats if c.name == 'parent_create_from_tree')
     assert c1.parent == None
     c2 = next(c for c in cats if c.name == 'parent_create_from_tree_2')
-    assert c2.parent == c1.pk
+    assert c2.parent == c1.prim_key
 
 @orm.db_session
 def test_create_from_tree_error(repo):

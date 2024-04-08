@@ -6,7 +6,7 @@ import pytest
 @pytest.fixture
 def custom_class():
     class Custom():
-        pk = 0
+        prim_key = 0
 
     return Custom
 
@@ -18,25 +18,25 @@ def repo():
 
 def test_crud(repo, custom_class):
     obj = custom_class()
-    pk = repo.add(obj)
-    assert obj.pk == pk
-    assert repo.get(pk) == obj
+    prim_key = repo.add(obj)
+    assert obj.prim_key == prim_key
+    assert repo.get(prim_key) == obj
     obj2 = custom_class()
-    obj2.pk = pk
+    obj2.prim_key = prim_key
     repo.update(obj2)
-    assert repo.get(pk) == obj2
-    repo.delete(pk)
-    assert repo.get(pk) is None
+    assert repo.get(prim_key) == obj2
+    repo.delete(prim_key)
+    assert repo.get(prim_key) is None
 
 
-def test_cannot_add_with_pk(repo, custom_class):
+def test_cannot_add_with_prim_key(repo, custom_class):
     obj = custom_class()
-    obj.pk = 1
+    obj.prim_key = 1
     with pytest.raises(ValueError):
         repo.add(obj)
 
 
-def test_cannot_add_without_pk(repo):
+def test_cannot_add_without_prim_key(repo):
     with pytest.raises(ValueError):
         repo.add(0)
 
@@ -46,7 +46,7 @@ def test_cannot_delete_unexistent(repo):
         repo.delete(1)
 
 
-def test_cannot_update_without_pk(repo, custom_class):
+def test_cannot_update_without_prim_key(repo, custom_class):
     obj = custom_class()
     with pytest.raises(ValueError):
         repo.update(obj)

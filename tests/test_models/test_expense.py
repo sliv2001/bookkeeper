@@ -27,17 +27,17 @@ def test_create_with_full_args_list():
                 added_date=datetime.now(), comment='test')
     orm.commit()
     assert e.amount == 100
-    assert e.category.pk == 1
+    assert e.category.prim_key == 1
 
 @orm.db_session
 def test_create_brief():
     e = Expense(amount=100, category=1)
     orm.commit()
     assert e.amount == 100
-    assert e.category.pk == 1
+    assert e.category.prim_key == 1
 
 @orm.db_session
 def test_can_add_to_repo(repo):
     e = Expense(amount=100, category=1)
-    pk = repo.add(e)
-    assert e.pk == pk
+    prim_key = repo.add(e)
+    assert e.prim_key == prim_key

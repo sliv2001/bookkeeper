@@ -27,7 +27,7 @@ def category_dialog(app):
     """
     presenter = Presenter()
     # Remove all extras from previous testing
-    presenter.deleteALL()
+    presenter.delete_all()
     dialog = CategoryDialog(presenter)
     dialog.show()
     return dialog

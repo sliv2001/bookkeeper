@@ -1,7 +1,10 @@
+"""
+The module contains repository for managing Category objects in the database.
+"""
 from pony import orm
 from typing import Callable, Any
 
-from bookkeeper.repository.sqlite_repository import *
+from bookkeeper.repository.sqlite_repository import SqliteRepository
 from bookkeeper.models.category import Category
 
 class CategoryRepository(SqliteRepository[Category]):
@@ -34,24 +37,24 @@ class CategoryRepository(SqliteRepository[Category]):
         with orm.db_session:
             instance = obj
             orm.commit()
-            return instance.pk
+            return instance.prim_key
 
 
-    def get(self, pk: int)-> Any:
+    def get(self, prim_key: int)-> Any:
         """
         Retrieves a Category object from the database by its primary key.
 
         Args:
-            pk (int): Primary key of the Category object.
+            prim_key (int): Primary key of the Category object.
 
         Returns:
             Any: Category object corresponding to the primary key.
         """
         with orm.db_session:
-            return Category.get(pk=pk)
+            return Category.get(prim_key=prim_key)
 
 
-    def getByName(self, name: str) -> Any:
+    def get_by_name(self, name: str) -> Any:
         """
         Retrieves a Category object from the database by its name.
 
@@ -90,17 +93,17 @@ class CategoryRepository(SqliteRepository[Category]):
             orm.commit()
 
 
-    def delete(self, pk: int) -> None:
+    def delete(self, prim_key: int) -> None:
         """
         Deletes a Category object from the database by its primary key.
 
         Args:
-            pk (int): Primary key of the Category object to be deleted.
+            prim_key (int): Primary key of the Category object to be deleted.
         """
         with orm.db_session:
-            Category[pk].delete()
+            Category[prim_key].delete()
 
-    def deleteALL(self):
+    def delete_all(self):
         """
         Deletes all Category objects from the database.
         """

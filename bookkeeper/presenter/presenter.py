@@ -58,7 +58,7 @@ class Presenter(QObject):
     _pendingCategoryChanges: list[list[str]] = []
     _pendingBudgetChanges: list[list[Any]] = []
 
-    _budget_IdPkDict: dict[int, int] = {}
+    _budget_Idprim_keyDict: dict[int, int] = {}
 
     def __init__(self, name: str = ':memory:') -> None:
         """
@@ -83,8 +83,8 @@ class Presenter(QObject):
             dict: Dictionary containing parent category names as keys and their children as values.
         """
         res: dict[str, list[str]] = {}
-        parentCat = self._categoryRepo.getByName(item)
-        children = [x.name for x in self._categoryRepo.get_all(lambda x: x.parent == parentCat.pk)]
+        parentCat = self._categoryRepo.get_by_name(item)
+        children = [x.name for x in self._categoryRepo.get_all(lambda x: x.parent == parentCat.prim_key)]
         for child in children:
             next_children = self._getCategoryChildren(child)
             if len(next_children) != 0:
@@ -165,7 +165,7 @@ class Presenter(QObject):
             cat (str): Name of the category to add.
             parent (str, optional): Parent category. Defaults to None.
         """
-        if self._categoryRepo.getByName(cat) != None:
+        if self._categoryRepo.get_by_name(cat) != None:
             raise RuntimeError('Entry already exists!')
         self._pendingCategoryChanges.append([None, cat, parent])
         self.updatedCategory.emit(True)
@@ -181,21 +181,21 @@ class Presenter(QObject):
                     if cat[2]==None:
                         self._categoryRepo.add(Category(name=cat[1]))
                     else:
-                        parentCatPk=self._categoryRepo.getByName(cat[2]).pk
-                        self._categoryRepo.add(Category(name=cat[1], parent=parentCatPk))
+                        parentCatprim_key=self._categoryRepo.get_by_name(cat[2]).prim_key
+                        self._categoryRepo.add(Category(name=cat[1], parent=parentCatprim_key))
                 elif cat[1] == None:
                     # Remove category: rebind children to elder parent
                     currentCat = Category(name=cat[0])
-                    for child in self._categoryRepo.get_all(lambda x: x.parent==currentCat.pk):
+                    for child in self._categoryRepo.get_all(lambda x: x.parent==currentCat.prim_key):
                         child.parent = currentCat.parent
                         self._categoryRepo.update(child)
-                    self._categoryRepo.delete(currentCat.pk)
+                    self._categoryRepo.delete(currentCat.prim_key)
                 else:
                     # Update category
                     # TODO check for wrong naming
                     c = Category(name=cat[0])
                     c.name = cat[1]
-                    c.parent = Category(name=cat[2]).pk
+                    c.parent = Category(name=cat[2]).prim_key
                     self._categoryRepo.update(c)
         self._pendingCategoryChanges = []
 
@@ -216,7 +216,7 @@ class Presenter(QObject):
             comment (str, optional): Additional comment for the expense. Defaults to ''.
         """
         with orm.db_session():
-            catEntry = self._categoryRepo.getByName(category)
+            catEntry = self._categoryRepo.get_by_name(category)
             if comment == '':
                 exp = Expense(amount=value, category=catEntry, expense_date=dt)
             else:
@@ -264,9 +264,9 @@ class Presenter(QObject):
         """
         # We need to combine data stored in database with current uncommited changes
         with orm.db_session():
-            res = self._budgetRepo.get_all(lambda x: x.pk > 3)
+            res = self._budgetRepo.get_all(lambda x: x.prim_key > 3)
             for i in range(len(res)):
-                self._budget_IdPkDict[i+3] = res[i].pk
+                self._budget_Idprim_keyDict[i+3] = res[i].prim_key
             currentBudgets = [[item.start, item.expiration, item.amount, k+3] for k, item in enumerate(res)]
         # The budget indexes which were affected by change
         changedIndexes = [i[3] for i in self._pendingBudgetChanges]
@@ -298,7 +298,7 @@ class Presenter(QObject):
             return self._pendingBudgetChanges[changedIndexes.index(period-1)][2]
         with orm.db_session():
             res = self._budgetRepo.get(period)
-            self._budget_IdPkDict[period-1] = res.pk
+            self._budget_Idprim_keyDict[period-1] = res.prim_key
             return res.amount
 
     def addBudget(self, start: datetime.datetime, end: datetime.datetime, plan: int, index: int):
@@ -323,7 +323,7 @@ class Presenter(QObject):
             plan (int): New planned budget amount.
         """
         try:
-            budgetEntry = self._budgetRepo.get(self._budget_IdPkDict[index])
+            budgetEntry = self._budgetRepo.get(self._budget_Idprim_keyDict[index])
             self._pendingBudgetChanges.append([budgetEntry.start, budgetEntry.expiration, plan, index])
         except KeyError:
             #TODO move to function:
@@ -355,14 +355,14 @@ class Presenter(QObject):
         """
         with orm.db_session():
             for budget in self._pendingBudgetChanges:
-                if budget[3] != None and not budget[3] in self._budget_IdPkDict.keys():
+                if budget[3] != None and not budget[3] in self._budget_Idprim_keyDict.keys():
                     # Append
                     budgetEntry = Budget(start=self.getDateTime_fromDate(budget[0]), expiration=self.getDateTime_fromDate(budget[1]), amount=budget[2])
                     self._budgetRepo.add(budgetEntry)
-                    self._budget_IdPkDict[budget[3]] = budgetEntry.pk
-                elif budget[3] != None and budget[3] in self._budget_IdPkDict.keys():
+                    self._budget_Idprim_keyDict[budget[3]] = budgetEntry.prim_key
+                elif budget[3] != None and budget[3] in self._budget_Idprim_keyDict.keys():
                     # Update
-                    budgetEntry = self._budgetRepo.get(self._budget_IdPkDict[budget[3]])
+                    budgetEntry = self._budgetRepo.get(self._budget_Idprim_keyDict[budget[3]])
                     budgetEntry.start = self.getDateTime_fromDate(budget[0])
                     budgetEntry.expiration = datetime.datetime.combine(budget[1], datetime.datetime.min.time())
                     budgetEntry.amount = budget[2]
@@ -380,13 +380,13 @@ class Presenter(QObject):
         """
         self._pendingBudgetChanges = []
 
-    def deleteALL(self):
+    def delete_all(self):
         """
         Deletes all data from the database.
         """
         with orm.db_session:
-            self._budgetRepo.deleteALL()
-            self._categoryRepo.deleteALL()
-            self._expenseRepo.deleteALL()
+            self._budgetRepo.delete_all()
+            self._categoryRepo.delete_all()
+            self._expenseRepo.delete_all()
         self._pendingCategoryChanges = []
         self._pendingBudgetChanges = []

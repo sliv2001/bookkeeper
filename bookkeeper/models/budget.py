@@ -16,7 +16,7 @@ class Budget(db.Entity):
     """
     Primary Key
     """
-    pk = orm.PrimaryKey(int, auto=True)
+    prim_key = orm.PrimaryKey(int, auto=True)
 
     """
     Date/time of beginning of a budget calculation
