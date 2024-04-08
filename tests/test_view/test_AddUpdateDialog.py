@@ -58,6 +58,7 @@ class TestAddUpdateDialog(unittest.TestCase):
         """
         # Test when spinBox value and comboBox currentIndex are valid
         self.dialog.ui.spinBox.setValue(10)
+        self.dialog.ui.comboBox.addItem("Category 1")
         self.dialog.ui.comboBox.setCurrentIndex(0)
         self.dialog.updateOkButton()
         self.assertTrue(self.dialog.ui.buttonBox.button(QDialogButtonBox.StandardButton.Ok).isEnabled())
