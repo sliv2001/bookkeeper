@@ -9,12 +9,28 @@ from bookkeeper.view.Ui_Budget import Ui_BudgetWindow
 from bookkeeper.presenter.presenter import Presenter
 
 class BudgetView(QDialog):
+    """
+    Dialog for managing budget entries.
+
+    Args:
+        presenter (Presenter, optional): Presenter object. Defaults to None.
+        parent (QWidget | None, optional): Parent widget. Defaults to ... (None).
+        flags (Qt.WindowType, optional): Window flags. Defaults to Qt.WindowType.
+    """
 
     _presenter: Presenter
 
     _updateAllowed: bool = False
 
     def __init__(self, presenter: Presenter = None, parent: QWidget | None = ..., flags: Qt.WindowType = ...) -> None:
+        """
+        Initializes the BudgetView dialog.
+
+        Args:
+            presenter (Presenter, optional): Presenter object. Defaults to None.
+            parent (QWidget | None, optional): Parent widget. Defaults to ... (None).
+            flags (Qt.WindowType, optional): Window flags. Defaults to Qt.WindowType.
+        """
         super(BudgetView, self).__init__()
         if presenter == None:
             self._presenter = parent.presenter
@@ -30,6 +46,9 @@ class BudgetView(QDialog):
 
     @Slot()
     def on_pushButton_clicked(self):
+        """
+        Slot handling the click event of the push button.
+        """
         dateStart = self.ui.dateEdit.date().toPython()
         dateEnd = self.ui.dateEdit_2.date().toPython()
         if (dateStart > dateEnd):
@@ -42,24 +61,45 @@ class BudgetView(QDialog):
 
     @Slot()
     def accept(self) -> None:
+        """
+        Slot handling the acceptance of the dialog.
+        """
         self._presenter.commitBudget()
         return super().accept()
 
     @Slot()
     def reject(self) -> None:
+        """
+        Slot handling the rejection of the dialog.
+        """
         self._presenter.cancelBudget()
         return super().reject()
-    
+
     @Slot()
     def on_spinBox_textChanged(self):
+        """
+        Slot handling the change in spin box text.
+        """
         self.updateAddButton()
 
     @Slot(QTableWidgetItem)
     def on_tableWidget_itemChanged(self, item: QTableWidgetItem):
-        if self._updateAllowed and item.column()==2: # Plan
+        """
+        Slot handling the change in table widget item.
+        """
+        if self._updateAllowed and item.column() == 2: # Plan
             self._presenter.updateBudget(item.row(), int(item.text()))
 
     def appendBudgetEntry(self, index: int, start: datetime, end: datetime, plan: int):
+        """
+        Append a budget entry to the table widget.
+
+        Args:
+            index (int): Row index.
+            start (datetime): Start date and time.
+            end (datetime): End date and time.
+            plan (int): Planned budget amount.
+        """
         self._updateAllowed = False
         entryStart = QTableWidgetItem(start.strftime('%a %d %b %Y'))
         entryStart.setFlags(~Qt.ItemFlag.ItemIsEditable)
@@ -78,23 +118,44 @@ class BudgetView(QDialog):
             entrySlack.setBackground(QColor('red'))
         self.ui.tableWidget.setItem(index, 3, entrySlack)
         self._updateAllowed = True
-        
+
 
     def getWeekBorders(self, dt: datetime):
+        """
+        Get the start and end dates of the week containing the given date.
+
+        Args:
+            dt (datetime): Date.
+
+        Returns:
+            Tuple[datetime, datetime]: Start and end dates of the week.
+        """
         start = dt - timedelta(days = dt.weekday())
         end = start + timedelta(days = 6)
         return start, end
-    
+
     def getMonthBorders(self, dt: datetime):
+        """
+        Get the start and end dates of the month containing the given date.
+
+        Args:
+            dt (datetime): Date.
+
+        Returns:
+            Tuple[datetime, datetime]: Start and end dates of the month.
+        """
         start = dt + relativedelta.relativedelta(day=1)
         end = dt + relativedelta.relativedelta(day=31)
         return start, end
 
     @Slot()
     def updateBudget(self):
+        """
+        Update the budget information in the dialog.
+        """
         entries = self._presenter.getBudgets()
         self.ui.tableWidget.setRowCount(len(entries)+3)
-        
+
         #TODO make that compact
         self.appendBudgetEntry(0, datetime.today(), datetime.today(), self._presenter.getBudget(1))
 
@@ -114,4 +175,7 @@ class BudgetView(QDialog):
         self.updateAddButton()
 
     def updateAddButton(self):
+        """
+        Update the state of the Add button based on input validity.
+        """
         self.ui.pushButton.setEnabled(self.ui.spinBox.value() > 0)
