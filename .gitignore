@@ -160,4 +160,4 @@ cython_debug/
 #.idea/
 
 # Generated files of user interface form
-bookkeeper/view/Ui_*.py
+# bookkeeper/view/Ui_*.py
