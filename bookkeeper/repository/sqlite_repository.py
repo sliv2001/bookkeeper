@@ -1,3 +1,7 @@
+"""
+This is the parent class of all the repository classes used in project.
+"""
+
 from pony import orm
 from typing import Any
 
