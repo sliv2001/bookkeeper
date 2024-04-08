@@ -1,3 +1,6 @@
+"""
+The file is the entry point of the project.
+"""
 import sys
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QFile, QIODevice, Qt, Slot, QMetaObject
