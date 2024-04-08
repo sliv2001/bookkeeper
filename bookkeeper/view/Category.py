@@ -7,9 +7,9 @@ from bookkeeper.presenter.presenter import Presenter
 class CategoryDialog(QDialog):
 
     presenter: Presenter
-    topLevels: list
-    dictOfAll: dict
-    
+    topLevels: list[str]
+    dictOfAll: dict[str, list[str]]
+
     def displayCategories(self, parentWidget : QTreeWidgetItem = None):
         if parentWidget == None:
             childrenList = self.topLevels
@@ -40,7 +40,7 @@ class CategoryDialog(QDialog):
     @Slot()
     def on_pushButton_clicked(self):
         newCat, res = QInputDialog.getText(self, 'New category', 'Name new category: ')
-        if res:
+        if res and len(newCat) > 0:
             if len(self.dictOfAll.keys())>0:
                 parentCat, res = QInputDialog.getItem(self, 'Parent category', 'Choose parent category', list(self.dictOfAll.keys()) + ['None'])
                 if res:

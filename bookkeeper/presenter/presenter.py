@@ -230,3 +230,5 @@ class Presenter(QObject):
             self._budgetRepo.deleteALL()
             self._categoryRepo.deleteALL()
             self._expenseRepo.deleteALL()
+        self._pendingCategoryChanges = []
+        self._pendingBudgetChanges = []
