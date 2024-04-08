@@ -29,6 +29,9 @@ mccabe = "^0.7.0"
 [tool.poetry.scripts]
 bookkeeper = 'bookkeeper.bookkeeper:main'
 
+[tool.pytest.ini_options]
+env = [ "D:QT_QPA_PLATFORM=offscreen"]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

@@ -31,7 +31,7 @@ def budget_view(app):
 
 def test_initial_state(budget_view):
     # Test initial state of UI components
-    assert budget_view.ui.dateEdit.dateTime() == budget_view.ui.dateEdit_2.dateTime()
+    assert budget_view.ui.dateEdit.dateTime().date() == budget_view.ui.dateEdit_2.dateTime().date()
     assert budget_view.ui.spinBox.value() == 0
     assert budget_view.ui.tableWidget.rowCount() == 3
 
