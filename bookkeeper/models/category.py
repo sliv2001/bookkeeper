@@ -1,3 +1,11 @@
+"""
+This module defines model of category data in PonyORM-compatible style.
+
+Classes:
+    Category: defines table entries of a category
+
+    Usage: this is utility class used within categoryRepo
+"""
 from pony import orm
 from datetime import datetime
 from typing import Iterator
@@ -7,9 +15,25 @@ from ..repository.abstract_repository import AbstractRepository
 from bookkeeper.models.database import db
 
 class Category(db.Entity):
+
+    """
+    Primary key.
+    """
     pk = orm.PrimaryKey(int, auto=True)
+
+    """
+    Unique name of category.
+    """
     name = orm.Required(str, unique=True)
+
+    """
+    Key of parent category, if any.
+    """
     parent = orm.Optional(int)
+
+    """
+    Reverse dependency towards 'Expense' table.
+    """
     expense = orm.Set('Expense')
 
     def get_parent(self,
